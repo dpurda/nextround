@@ -1,9 +1,5 @@
-<div class="mx-auto mt-16 max-w-sm">
-  <h1 class="text-xl font-semibold">Log in to NextRound</h1>
-  <p class="mt-1 text-sm text-secondary">
-    Don't have an account yet? You'll need an invitation code from an admin or interviewer —
-    <%= link_to "claim your invite here", new_claim_path %>.
-  </p>
+<div class="win-panel p-6">
+  <h1 class="text-center text-lg font-semibold">Log in</h1>
 
   <%= render "shared/form_errors", object: resource %>
 
@@ -28,4 +24,9 @@
 
     <%= f.submit "Log in", class: "win-btn win-btn-primary w-full cursor-pointer" %>
   <% end %>
+</div>
+
+<div class="win-panel mt-4 p-6 text-center">
+  <p class="text-sm text-secondary">Have an invitation code?</p>
+  <%= link_to "Claim your invitation", new_claim_path, class: "win-btn mt-3 w-full" %>
 </div>

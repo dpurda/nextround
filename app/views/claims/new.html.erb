@@ -1,6 +1,6 @@
-<div class="mx-auto mt-16 max-w-sm">
-  <h1 class="text-xl font-semibold">Claim your invitation</h1>
-  <p class="mt-1 text-sm text-secondary">
+<div class="win-panel p-6">
+  <h1 class="text-center text-lg font-semibold">Claim your invitation</h1>
+  <p class="mt-1 text-center text-sm text-secondary">
     Enter the 16-digit code you were given, choose a password, and you're in.
   </p>
 
@@ -35,4 +35,9 @@
       Activate account
     </button>
   <% end %>
+</div>
+
+<div class="win-panel mt-4 p-6 text-center">
+  <p class="text-sm text-secondary">Already have an account?</p>
+  <%= link_to "Log in", new_user_session_path, class: "win-btn mt-3 w-full" %>
 </div>

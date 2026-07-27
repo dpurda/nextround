@@ -70,23 +70,47 @@ shadow, to read as distinct from the page background.
 
 ## Components
 
-### Top nav
+### Two layouts: `application` vs `auth`
+There is no nav at all on signed-out screens — there's nothing to navigate
+to yet, and showing a nav with only a "Log in" button in it is just clutter
+around the one thing the page is for. `ApplicationController#layout_for_request`
+picks the layout per request: `devise_controller?` (Devise's own sessions
+controller) or `controller_name == "claims"` gets `layouts/auth` (no nav,
+content vertically/horizontally centered, just the "NextRound" wordmark
+above the card); every other controller — which all require authentication
+via the global `before_action :authenticate_user!` — gets `layouts/application`
+with the full nav. Because of that split, `layouts/application`'s nav
+markup can assume `user_signed_in?` is always true and skip the logged-out
+branch entirely (Devise's own `authenticate_user!` already no-ops inside
+`devise_controller?`, so this doesn't risk a redirect loop on the sign-in
+page itself).
+
+Signed-out screens (`devise/sessions/new`, `claims/new`) are built as
+stacked `.win-panel` cards: the primary action (the form) first, then a
+second card immediately below for the alternate path ("Have an invitation
+code? → Claim your invitation" / "Already have an account? → Log in") as
+its own full-width button — not a text link buried inside a sentence.
+Cross-linking both ways (login page links to claim, claim page links back
+to login) means whichever one a user lands on, the other path is one click
+away and equally visible.
+
+### Top nav (signed-in only)
 White background, 1px bottom border, single row split into two groups by
 `justify-between` — brand + nav links (Interviews/Invites/My profile) on the
-left, user email + session action on the right. Don't bundle both groups
-into one flex container even temporarily (e.g. while prototyping the mobile
-menu) — with the hamburger hidden at desktop width, `justify-between` will
-float a single combined group toward the middle instead of pinning nav
-links left and session right.
+left, user email + logout on the right. Don't bundle both groups into one
+flex container even temporarily (e.g. while prototyping the mobile menu) —
+with the hamburger hidden at desktop width, `justify-between` will float a
+single combined group toward the middle instead of pinning nav links left
+and session right.
 
-Session action button: "Log in" uses the primary blue button; "Log out"
-uses the danger variant (`.win-btn-danger` — white background, red border
-and text, light red fill on hover) since it's the one button that ends
-your session, even though it isn't strictly a destructive/delete action.
+Logout uses the danger button variant (`.win-btn-danger` — white
+background, red border and text, light red fill on hover) since it's the
+one button that ends your session, even though it isn't strictly a
+destructive/delete action.
 
-Below the `md` breakpoint, nav links + email + session action collapse
-behind a hamburger icon button (`.win-icon-btn`, `md:hidden`) that toggles
-a stacked mobile menu panel via a small Stimulus controller
+Below the `md` breakpoint, nav links + email + logout collapse behind a
+hamburger icon button (`.win-icon-btn`, `md:hidden`) that toggles a stacked
+mobile menu panel via a small Stimulus controller
 (`app/javascript/controllers/nav_controller.js`, `data-controller="nav"`).
 The menu panel's base classes are `hidden md:hidden` — the controller
 toggles only the plain `hidden` token, leaving `md:hidden` to permanently
@@ -143,6 +167,48 @@ breaking the page on narrow screens, and hide less-essential columns below
 `sm`/`md` with `hidden sm:table-cell`/`hidden md:table-cell` (matched on
 both the `<th>` and its column's `<td>`s) rather than shrinking the
 container.
+
+### Search/filter forms
+Every list page's search form goes through the shared
+`shared/_search_form` partial rather than each page hand-rolling its own
+`search_form_for` block — it's rendered as a **partial-as-layout** so each
+page still supplies its own filter fields:
+
+```erb
+<%= render layout: "shared/search_form", locals: { q: @q, url: interviews_path } do |f| %>
+  <div>
+    <%= f.label :title_cont, "Search", class: "win-field-label" %>
+    <%= f.search_field :title_cont, class: "win-input" %>
+  </div>
+<% end %>
+```
+
+The partial owns the `.win-panel` wrapper styling and the Search/Clear
+buttons; the page's block receives the Ransack form builder (`f`) via
+`yield f` inside the partial and renders whatever fields make sense for
+that model. Don't put example `<%= %>`/`<% end %>` snippets inside an ERB
+comment (`<%# %>`) in the partial itself — a literal `%>` inside the
+comment text closes it early and leaves a stray `<% end %>` behind,
+which is a real syntax error we hit once already.
+
+Ransack's `_eq` predicate on an integer/enum column casts the raw param
+with `.to_i` — it does **not** translate a Rails enum's string label to
+its integer value the way `ActiveRecord::Base#where(status: "cancelled")`
+does. Every enum filter `<select>` must submit the enum's integer value,
+e.g. `Interview.statuses.map { |label, value| [label.humanize, value] }`,
+**not** `.keys.map { |s| [s.humanize, s] }` — the latter silently filters
+on the wrong records (a non-numeric string like `"cancelled"` casts to
+`0`, matching whichever enum member happens to be value `0`).
+
+### Pagination
+Shared `shared/_pagination` partial (`locals: { pagy: @pagy }`) wraps
+Pagy's `@pagy.series_nav` and only renders when there's more than one
+page. Pagy 43.x uses a single `Pagy::Method` mixin
+(`include Pagy::Method` in `ApplicationController`, `@pagy, @records =
+pagy(scope)`) rather than the older `Pagy::Backend`/`Pagy::Frontend`
+split — the nav is called directly on the pagy instance
+(`@pagy.series_nav`), not a `pagy_nav(@pagy)` view helper. Styled via a
+`.series-nav` CSS block in `@layer components`.
 
 ### Status badges
 Small square (not pill) tags: colored text on a light tint background

@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   include Pagy::Method
 
   allow_browser versions: :modern
+  layout :layout_for_request
 
   before_action :authenticate_user!
   helper_method :policy
@@ -10,6 +11,10 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
   private
+
+  def layout_for_request
+    devise_controller? || controller_name == "claims" ? "auth" : "application"
+  end
 
   def user_not_authorized
     redirect_to root_path, alert: "You are not authorized to do that."
