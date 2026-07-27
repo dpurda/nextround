@@ -105,5 +105,47 @@ RSpec.describe "InterviewQuestions", type: :request do
 
       expect(question.reload.covered?).to be(true)
     end
+
+    it "locks the candidate out of a question once they've already answered it, but leaves other questions open" do
+      interview = create(:interview, status: :scheduled)
+      answered = interview.interview_questions.create!(prompt: "Q1")
+      unanswered = interview.interview_questions.create!(prompt: "Q2")
+
+      sign_in interview.candidate
+      patch interview_interview_question_path(interview, answered), params: { interview_question: { answer: "first answer" } }
+      expect(interview.reload.status).to eq("in_progress")
+
+      get edit_interview_interview_question_path(interview, answered)
+      expect(response).to redirect_to(root_path)
+
+      patch interview_interview_question_path(interview, answered), params: { interview_question: { answer: "trying again" } }
+      expect(response).to redirect_to(root_path)
+      expect(answered.reload.answer).to eq("first answer")
+
+      get interview_path(interview)
+      answered_frame = ActionView::RecordIdentifier.dom_id(answered)
+      unanswered_frame = ActionView::RecordIdentifier.dom_id(unanswered)
+      answered_html = response.body[/<turbo-frame id="#{answered_frame}".*?<\/turbo-frame>/m]
+      unanswered_html = response.body[/<turbo-frame id="#{unanswered_frame}".*?<\/turbo-frame>/m]
+      expect(answered_html).not_to include("Answer question")
+      expect(unanswered_html).to include("Answer question")
+
+      get edit_interview_interview_question_path(interview, unanswered)
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "never lets the interviewer or admin write the answer field, even after the interview has started" do
+      interview = create(:interview, status: :in_progress)
+      question = interview.interview_questions.create!(prompt: "Q")
+
+      sign_in interview.interviewer
+      patch interview_interview_question_path(interview, question), params: { interview_question: { answer: "hijacked", covered: "1" } }
+      expect(question.reload.answer).to be_nil
+      expect(question.covered?).to be(true)
+
+      sign_in create(:user, :admin)
+      patch interview_interview_question_path(interview, question), params: { interview_question: { answer: "hijacked again" } }
+      expect(question.reload.answer).to be_nil
+    end
   end
 end

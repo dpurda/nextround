@@ -91,6 +91,41 @@ if !Rails.env.test? && Interview.count.zero?
 
   interview_types = Interview.interview_types.keys
 
+  # One shared template per interview type, so the demo data shows off the
+  # question bank and the checklist it produces on an interview, not just an
+  # empty "New template" screen.
+  question_bank = {
+    "technical" => [
+      "Explain the difference between a block, a proc, and a lambda.",
+      "What causes an N+1 query, and how would you spot one?",
+      "Walk through how you'd debug a memory leak in a long-running process.",
+      "What's the difference between optimistic and pessimistic locking?"
+    ],
+    "behavioral" => [
+      "Tell me about a time you disagreed with a technical decision.",
+      "Describe a project that didn't go as planned. What did you learn?",
+      "How do you prioritize when everything feels urgent?",
+      "Tell me about a time you had to give difficult feedback."
+    ],
+    "system_design" => [
+      "Design a URL shortener that can handle 10M requests per day.",
+      "How would you design a rate limiter?",
+      "Walk through the tradeoffs of SQL vs NoSQL for a social feed.",
+      "How would you shard a growing multi-tenant database?"
+    ]
+  }
+
+  templates = interview_types.map do |type|
+    template = InterviewTemplate.create!(
+      name: "#{type.humanize} interview template",
+      interview_type: type,
+      description: "Standard #{type.humanize.downcase} interview question set.",
+      created_by: interviewers.sample
+    )
+    question_bank.fetch(type).each { |prompt| template.template_questions.create!(prompt: prompt) }
+    template
+  end
+
   100.times do
     scheduled_offset = rand(-60..15)
     scheduled_at = scheduled_offset.days.from_now.change(hour: rand(9..17))
@@ -98,6 +133,9 @@ if !Rails.env.test? && Interview.count.zero?
     # with some cancelled/in-progress, so reporting trends look realistic.
     status = scheduled_offset.positive? ? :scheduled : %i[completed completed completed cancelled in_progress].sample
     type = interview_types.sample
+    # Half of past/active interviews start from a template; scheduled ones and
+    # the other half stay blank, so the demo shows both paths.
+    template = status != :scheduled && rand < 0.5 ? templates.find { |t| t.interview_type == type } : nil
 
     interview = Interview.create!(
       interviewer: interviewers.sample,
@@ -106,11 +144,26 @@ if !Rails.env.test? && Interview.count.zero?
       interview_type: type,
       status: (status == :completed ? :scheduled : status),
       scheduled_at: scheduled_at,
-      duration_minutes: [ 30, 45, 60, 90 ].sample
+      duration_minutes: [ 30, 45, 60, 90 ].sample,
+      interview_template: template
     )
+
+    if template
+      interview.interview_questions.each do |question|
+        next if rand < 0.3 # leave some untouched, for realism
+
+        question.update!(
+          covered: [ true, true, false ].sample,
+          notes: rand < 0.6 ? Faker::Lorem.sentence(word_count: 8) : nil,
+          answer: rand < 0.7 ? Faker::Lorem.sentence(word_count: 12) : nil
+        )
+      end
+    end
 
     next unless status == :completed
 
+    # Creating feedback completes the interview itself (Feedback#complete_interview),
+    # so there's no separate status write needed here.
     Feedback.create!(
       interview: interview,
       strengths: Faker::Lorem.sentence(word_count: 10),
@@ -119,9 +172,9 @@ if !Rails.env.test? && Interview.count.zero?
       overall_rating: rand(1..5),
       notes: Faker::Lorem.paragraph(sentence_count: 2)
     )
-    interview.update!(status: :completed)
   end
 
   puts "Seeded #{interviewers.size} interviewers, #{candidates.size} candidates, " \
-       "#{Interview.count} interviews (#{Feedback.count} with feedback)."
+       "#{Interview.count} interviews (#{Feedback.count} with feedback), " \
+       "#{InterviewTemplate.count} interview templates."
 end

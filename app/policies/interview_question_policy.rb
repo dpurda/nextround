@@ -16,6 +16,6 @@ class InterviewQuestionPolicy < ApplicationPolicy
   end
 
   def answering_candidate?
-    user.candidate? && record.interview.candidate_id == user.id
+    user.candidate? && record.interview.candidate_id == user.id && record.answer.blank?
   end
 end
