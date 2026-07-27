@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_27_093730) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_27_150137) do
   create_table "candidate_profiles", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "phone"
@@ -20,10 +20,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_093730) do
     t.text "bio"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "education"
     t.string "location"
-    t.text "work_experience"
     t.index ["user_id"], name: "index_candidate_profiles_on_user_id"
+  end
+
+  create_table "educations", force: :cascade do |t|
+    t.integer "candidate_profile_id", null: false
+    t.string "institution", null: false
+    t.string "degree", null: false
+    t.string "field_of_study"
+    t.date "start_date", null: false
+    t.date "end_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["candidate_profile_id"], name: "index_educations_on_candidate_profile_id"
   end
 
   create_table "feedbacks", force: :cascade do |t|
@@ -83,10 +93,24 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_093730) do
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
   end
 
+  create_table "work_experiences", force: :cascade do |t|
+    t.integer "candidate_profile_id", null: false
+    t.string "company", null: false
+    t.string "title", null: false
+    t.date "start_date", null: false
+    t.date "end_date"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["candidate_profile_id"], name: "index_work_experiences_on_candidate_profile_id"
+  end
+
   add_foreign_key "candidate_profiles", "users"
+  add_foreign_key "educations", "candidate_profiles"
   add_foreign_key "feedbacks", "interviews"
   add_foreign_key "interviewer_profiles", "users"
   add_foreign_key "interviews", "users", column: "candidate_id"
   add_foreign_key "interviews", "users", column: "interviewer_id"
   add_foreign_key "users", "users", column: "invited_by_id"
+  add_foreign_key "work_experiences", "candidate_profiles"
 end

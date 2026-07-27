@@ -57,15 +57,35 @@ if !Rails.env.test? && Interview.count.zero?
       password: demo_password,
       password_confirmation: demo_password
     )
-    user.create_candidate_profile!(
+    years_of_experience = rand(0..10)
+    profile = user.create_candidate_profile!(
       phone: Faker::PhoneNumber.phone_number,
       current_role: Faker::Job.title,
       target_role: target_roles.sample,
-      years_of_experience: rand(0..10),
-      education: "#{Faker::Educator.degree} - #{Faker::University.name}",
+      years_of_experience: years_of_experience,
       location: "#{Faker::Address.city}, #{Faker::Address.country}",
-      work_experience: Faker::Lorem.paragraph(sentence_count: 2)
+      bio: Faker::Lorem.paragraph(sentence_count: 2)
     )
+
+    rand(1..2).times do |job_index|
+      starts_ago = years_of_experience - (job_index * 2)
+      profile.work_experiences.create!(
+        company: Faker::Company.name,
+        title: Faker::Job.title,
+        start_date: [ starts_ago, 1 ].max.years.ago.to_date,
+        end_date: job_index.zero? ? nil : (starts_ago - 2).years.ago.to_date,
+        description: Faker::Lorem.paragraph(sentence_count: 2)
+      )
+    end
+
+    profile.educations.create!(
+      institution: Faker::University.name,
+      degree: Faker::Educator.degree,
+      field_of_study: Faker::Educator.subject,
+      start_date: (years_of_experience + 6).years.ago.to_date,
+      end_date: (years_of_experience + 2).years.ago.to_date
+    )
+
     user
   end
 

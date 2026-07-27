@@ -5,9 +5,21 @@ FactoryBot.define do
     current_role { "Software Engineer" }
     target_role { "Senior Software Engineer" }
     years_of_experience { 3 }
-    education { "BS Computer Science, MIT" }
     location { "Bucharest, RO" }
-    work_experience { "3 years at Acme Corp as a backend engineer" }
     bio { "Motivated engineer preparing for senior interviews." }
+
+    trait :with_cv_entries do
+      after(:create) do |profile|
+        profile.work_experiences.create!(
+          company: "Acme Corp", title: "Backend Engineer",
+          start_date: 3.years.ago.to_date, end_date: nil,
+          description: "Building backend services."
+        )
+        profile.educations.create!(
+          institution: "MIT", degree: "BS", field_of_study: "Computer Science",
+          start_date: 8.years.ago.to_date, end_date: 4.years.ago.to_date
+        )
+      end
+    end
   end
 end
