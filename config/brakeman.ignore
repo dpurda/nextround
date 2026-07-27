@@ -1,0 +1,27 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "7b3b8da13ab6a8c649668ca6fc373e3f09192f63762b3490cec8f0109b7a706f",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/invites_controller.rb",
+      "line": 40,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:user).permit(:email, :role)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "InvitesController",
+        "method": "invite_params"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "cwe_id": [915],
+      "note": "False positive: InvitesController#create calls `authorize @invited_user` immediately after this mass assignment, before save. UserPolicy#create? checks `invitable_roles.include?(record.role.to_sym)` against the *submitted* role — an interviewer can only invite `candidate`, an admin only `interviewer`/`candidate` — so a request for `role: \"admin\"` (or any role the current user isn't allowed to grant) is rejected by Pundit before the record is ever saved. Covered by spec/requests/invites_spec.rb ('does not let an interviewer escalate an invite to admin', 'does not let an interviewer invite another interviewer')."
+    }
+  ],
+  "updated": "2026-07-27 20:30:00 +0000",
+  "brakeman_version": "8.0.5"
+}

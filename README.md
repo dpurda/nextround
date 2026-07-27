@@ -69,8 +69,8 @@ why.
 
 ## Setup instructions
 
-Requires Ruby 3.2+ and no other services (SQLite ships with the app, no
-Postgres/Redis/Node to install).
+Requires Ruby 3.4+ (see `.ruby-version`) and no other services (SQLite
+ships with the app, no Postgres/Redis/Node to install).
 
 ```bash
 git clone <this repo>

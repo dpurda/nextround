@@ -126,6 +126,16 @@ RSpec.describe "Invites", type: :request do
       expect(response).to redirect_to(root_path)
     end
 
+    it "does not let an interviewer escalate an invite to admin" do
+      sign_in create(:user, :interviewer)
+
+      expect do
+        post invites_path, params: { user: { email: "sneaky@example.com", role: "admin" } }
+      end.not_to change(User, :count)
+
+      expect(response).to redirect_to(root_path)
+    end
+
     it "lets an admin invite an interviewer" do
       sign_in create(:user, :admin)
 
