@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_27_150137) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_27_220103) do
   create_table "candidate_profiles", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "phone"
@@ -48,6 +48,26 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_150137) do
     t.index ["interview_id"], name: "index_feedbacks_on_interview_id", unique: true
   end
 
+  create_table "interview_questions", force: :cascade do |t|
+    t.integer "interview_id", null: false
+    t.text "prompt", null: false
+    t.text "notes"
+    t.boolean "covered", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interview_id"], name: "index_interview_questions_on_interview_id"
+  end
+
+  create_table "interview_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "description"
+    t.integer "interview_type", default: 0, null: false
+    t.integer "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_interview_templates_on_created_by_id"
+  end
+
   create_table "interviewer_profiles", force: :cascade do |t|
     t.integer "user_id", null: false
     t.text "expertise"
@@ -70,10 +90,20 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_150137) do
     t.integer "duration_minutes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "interview_template_id"
     t.index ["candidate_id"], name: "index_interviews_on_candidate_id"
+    t.index ["interview_template_id"], name: "index_interviews_on_interview_template_id"
     t.index ["interviewer_id"], name: "index_interviews_on_interviewer_id"
     t.index ["scheduled_at"], name: "index_interviews_on_scheduled_at"
     t.index ["status"], name: "index_interviews_on_status"
+  end
+
+  create_table "template_questions", force: :cascade do |t|
+    t.integer "interview_template_id", null: false
+    t.text "prompt", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interview_template_id"], name: "index_template_questions_on_interview_template_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -108,9 +138,13 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_150137) do
   add_foreign_key "candidate_profiles", "users"
   add_foreign_key "educations", "candidate_profiles"
   add_foreign_key "feedbacks", "interviews"
+  add_foreign_key "interview_questions", "interviews"
+  add_foreign_key "interview_templates", "users", column: "created_by_id"
   add_foreign_key "interviewer_profiles", "users"
+  add_foreign_key "interviews", "interview_templates"
   add_foreign_key "interviews", "users", column: "candidate_id"
   add_foreign_key "interviews", "users", column: "interviewer_id"
+  add_foreign_key "template_questions", "interview_templates"
   add_foreign_key "users", "users", column: "invited_by_id"
   add_foreign_key "work_experiences", "candidate_profiles"
 end
