@@ -34,7 +34,16 @@ class InterviewsController < ApplicationController
     authorize @interview
 
     if @interview.update(interview_params)
-      redirect_to @interview, notice: "Interview updated."
+      flash.now[:notice] = "Interview updated."
+      respond_to do |format|
+        format.html { redirect_to @interview, notice: "Interview updated." }
+        format.turbo_stream do
+          render turbo_stream: [
+            turbo_stream.replace(helpers.dom_id(@interview), partial: "details_card", locals: { interview: @interview }),
+            turbo_stream.replace("flash", partial: "shared/flash")
+          ]
+        end
+      end
     else
       render :edit, status: :unprocessable_content
     end

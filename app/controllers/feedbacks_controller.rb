@@ -12,7 +12,7 @@ class FeedbacksController < ApplicationController
     authorize @feedback
 
     if @feedback.save
-      redirect_to @interview, notice: "Feedback saved."
+      respond_with_saved_feedback("Feedback saved.")
     else
       render :new, status: :unprocessable_content
     end
@@ -26,13 +26,26 @@ class FeedbacksController < ApplicationController
     authorize @feedback
 
     if @feedback.update(feedback_params)
-      redirect_to @interview, notice: "Feedback updated."
+      respond_with_saved_feedback("Feedback updated.")
     else
       render :edit, status: :unprocessable_content
     end
   end
 
   private
+
+  def respond_with_saved_feedback(message)
+    flash.now[:notice] = message
+    respond_to do |format|
+      format.html { redirect_to @interview, notice: message }
+      format.turbo_stream do
+        render turbo_stream: [
+          turbo_stream.replace(:feedback, partial: "feedbacks/card", locals: { interview: @interview }),
+          turbo_stream.replace("flash", partial: "shared/flash")
+        ]
+      end
+    end
+  end
 
   def set_interview
     @interview = Interview.find(params[:interview_id])

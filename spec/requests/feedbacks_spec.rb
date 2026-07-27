@@ -58,6 +58,21 @@ RSpec.describe "Feedbacks", type: :request do
       expect(response).to have_http_status(:unprocessable_content)
     end
 
+    it "responds with turbo_stream updates for both the feedback card and the flash when requested" do
+      interview = create(:interview)
+      sign_in interview.interviewer
+
+      post interview_feedback_path(interview),
+        params: { feedback: { strengths: "Great communication", improvements: "More depth", recommendation: "hire", overall_rating: 4 } },
+        headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(response.body).to include(%(turbo-stream action="replace" target="feedback"))
+      expect(response.body).to include(%(turbo-stream action="replace" target="flash"))
+      expect(response.body).to include("Feedback saved.")
+      expect(response.body).to include("Great communication")
+    end
+
     it "is forbidden for an admin-unrelated interviewer" do
       interview = create(:interview)
       sign_in create(:user, :interviewer)

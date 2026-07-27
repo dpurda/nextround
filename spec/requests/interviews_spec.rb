@@ -146,6 +146,46 @@ RSpec.describe "Interviews", type: :request do
       expect(interview.reload.title).to eq("New title")
     end
 
+    it "responds with turbo_stream updates for both the card and the flash when requested" do
+      interview = create(:interview, duration_minutes: 30)
+      sign_in interview.interviewer
+      frame_id = ActionView::RecordIdentifier.dom_id(interview)
+
+      patch interview_path(interview),
+        params: { interview: { duration_minutes: 90 } },
+        headers: { "Accept" => "text/vnd.turbo-stream.html" }
+
+      expect(response.media_type).to eq(Mime[:turbo_stream])
+      expect(response.body).to include(%(turbo-stream action="replace" target="#{frame_id}"))
+      expect(response.body).to include(%(turbo-stream action="replace" target="flash"))
+      expect(response.body).to include("Interview updated.")
+      expect(response.body).to include("90 minutes")
+    end
+
+    it "wraps both the show page details and the edit form in the same turbo frame" do
+      interview = create(:interview)
+      sign_in interview.interviewer
+
+      frame_id = ActionView::RecordIdentifier.dom_id(interview)
+
+      get interview_path(interview)
+      expect(response.body).to include(%(<turbo-frame id="#{frame_id}"))
+
+      get edit_interview_path(interview)
+      expect(response.body).to include(%(<turbo-frame id="#{frame_id}"))
+    end
+
+    it "re-renders the edit form inline (same frame) when validation fails" do
+      interview = create(:interview)
+      sign_in interview.interviewer
+      frame_id = ActionView::RecordIdentifier.dom_id(interview)
+
+      patch interview_path(interview), params: { interview: { title: "" } }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include(%(<turbo-frame id="#{frame_id}"))
+    end
+
     it "is forbidden for the candidate on the interview" do
       interview = create(:interview)
       sign_in interview.candidate
