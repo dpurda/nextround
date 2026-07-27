@@ -1,23 +1,23 @@
 <div class="mx-auto max-w-lg">
   <% if @invited_user.pending_invitation? %>
     <div class="text-center">
-      <h1 class="text-2xl font-semibold text-slate-900">Invitation created</h1>
-      <p class="mt-1 text-sm text-slate-500">
+      <h1 class="text-xl font-semibold">Invitation created</h1>
+      <p class="mt-1 text-sm text-secondary">
         Share this code with <%= @invited_user.email %> (<%= @invited_user.role.humanize %>).
         It expires in 7 days and can only be used once.
       </p>
 
-      <div class="mt-6 rounded-md border border-slate-300 bg-slate-100 p-6">
-        <span class="font-mono text-3xl tracking-widest text-slate-900"><%= @invited_user.invitation_code %></span>
+      <div class="win-panel mt-6 p-6">
+        <span class="font-mono text-3xl tracking-widest"><%= @invited_user.invitation_code %></span>
       </div>
     </div>
   <% else %>
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-semibold text-slate-900"><%= @invited_user.name %></h1>
-        <p class="text-sm text-slate-500"><%= @invited_user.email %> · <%= @invited_user.role.humanize %></p>
+        <h1 class="text-xl font-semibold"><%= @invited_user.name %></h1>
+        <p class="text-sm text-secondary"><%= @invited_user.email %> · <%= @invited_user.role.humanize %></p>
       </div>
-      <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">Claimed</span>
+      <span class="win-badge win-badge-success">Claimed</span>
     </div>
 
     <div class="mt-6">
@@ -28,13 +28,13 @@
           <%= render "interviewer_profiles/details", interviewer_profile: @invited_user.profile %>
         <% end %>
       <% else %>
-        <p class="text-sm text-slate-500">They haven't completed their profile yet.</p>
+        <p class="text-sm text-secondary">They haven't completed their profile yet.</p>
       <% end %>
     </div>
   <% end %>
 
   <div class="mt-6 flex justify-center gap-4 text-sm">
-    <%= link_to "Invite someone else", new_invite_path, class: "text-indigo-600 hover:underline" %>
-    <%= link_to "Back to invites", invites_path, class: "text-slate-500 hover:underline" %>
+    <%= link_to "Invite someone else", new_invite_path %>
+    <%= link_to "Back to invites", invites_path, class: "text-secondary" %>
   </div>
 </div>

@@ -1,27 +1,31 @@
 <div class="mx-auto mt-16 max-w-sm">
-  <h1 class="text-2xl font-semibold text-slate-900">Log in to NextRound</h1>
-  <p class="mt-1 text-sm text-slate-500">
+  <h1 class="text-xl font-semibold">Log in to NextRound</h1>
+  <p class="mt-1 text-sm text-secondary">
     Don't have an account yet? You'll need an invitation code from an admin or interviewer —
-    <%= link_to "claim your invite here", new_claim_path, class: "text-indigo-600 hover:underline" %>.
+    <%= link_to "claim your invite here", new_claim_path %>.
   </p>
+
   <%= render "shared/form_errors", object: resource %>
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "mt-6 space-y-4" }) do |f| %>
+
+  <%= form_for(resource, as: resource_name, url: session_path(resource_name), builder: FluentFormBuilder,
+        html: { class: "mt-6 space-y-4" }) do |f| %>
     <div>
-      <%= f.label :email, class: "block text-sm font-medium text-slate-700" %>
-      <%= f.email_field :email, autofocus: true, autocomplete: "email",
-            class: "mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      <%= f.label :email %>
+      <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
     </div>
+
     <div>
-      <%= f.label :password, class: "block text-sm font-medium text-slate-700" %>
-      <%= f.password_field :password, autocomplete: "current-password",
-            class: "mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      <%= f.label :password %>
+      <%= f.password_field :password, autocomplete: "current-password" %>
     </div>
+
     <% if devise_mapping.rememberable? %>
       <div class="flex items-center gap-2">
-        <%= f.check_box :remember_me, class: "rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" %>
-        <%= f.label :remember_me, class: "text-sm text-slate-700" %>
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me, class: "text-sm" %>
       </div>
     <% end %>
-    <%= f.submit "Log in", class: "w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 cursor-pointer" %>
+
+    <%= f.submit "Log in", class: "win-btn win-btn-primary w-full cursor-pointer" %>
   <% end %>
 </div>

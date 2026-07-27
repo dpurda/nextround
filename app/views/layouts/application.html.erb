@@ -14,29 +14,66 @@
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-slate-50 min-h-screen">
-    <nav class="border-b border-slate-200 bg-white">
-      <div class="container mx-auto flex items-center justify-between px-5 py-3">
-        <%= link_to "NextRound", root_path, class: "text-lg font-semibold text-slate-900" %>
+
+  <body class="win-window min-h-screen">
+    <div class="win-titlebar px-3 py-2" data-controller="nav">
+      <div class="flex items-center justify-between">
+        <!-- Left group: brand + nav links (nav links shown md and up) -->
+        <div class="flex items-center gap-2">
+          <%= link_to "NextRound", root_path, class: "font-semibold mr-2" %>
+          <% if user_signed_in? %>
+            <div class="hidden md:flex items-center gap-2">
+              <%= link_to "Interviews", interviews_path, class: "win-btn" %>
+              <% if policy(User).index? %>
+                <%= link_to "Invites", invites_path, class: "win-btn" %>
+              <% end %>
+              <% if profile_path_for(current_user) %>
+                <%= link_to "My profile", profile_path_for(current_user), class: "win-btn" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Right group: user/session, md and up -->
+        <div class="hidden md:flex items-center gap-3">
+          <% if user_signed_in? %>
+            <span class="text-sm"><%= current_user.email %></span>
+            <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "win-btn win-btn-danger" %>
+          <% else %>
+            <%= link_to "Log in", new_user_session_path, class: "win-btn win-btn-primary" %>
+          <% end %>
+        </div>
+
+        <!-- Hamburger toggle: below md -->
+        <button type="button" class="win-icon-btn md:hidden" data-action="nav#toggle" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="4" y1="6" x2="20" y2="6"/>
+            <line x1="4" y1="12" x2="20" y2="12"/>
+            <line x1="4" y1="18" x2="20" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile menu: below md, toggled by the hamburger button -->
+      <div data-nav-target="menu" class="hidden md:hidden mt-3 flex flex-col items-stretch gap-2">
         <% if user_signed_in? %>
-          <div class="flex items-center gap-4 text-sm text-slate-600">
-            <%= link_to "Interviews", interviews_path, class: "text-indigo-600 hover:underline" %>
-            <% if policy(User).index? %>
-              <%= link_to "Invites", invites_path, class: "text-indigo-600 hover:underline" %>
-            <% end %>
-            <% if profile_path_for(current_user) %>
-              <%= link_to "My profile", profile_path_for(current_user), class: "text-indigo-600 hover:underline" %>
-            <% end %>
-            <span><%= current_user.email %></span>
-            <%= button_to "Log out", destroy_user_session_path, method: :delete,
-                  class: "text-slate-600 hover:text-slate-900 cursor-pointer" %>
-          </div>
+          <%= link_to "Interviews", interviews_path, class: "win-btn justify-start" %>
+          <% if policy(User).index? %>
+            <%= link_to "Invites", invites_path, class: "win-btn justify-start" %>
+          <% end %>
+          <% if profile_path_for(current_user) %>
+            <%= link_to "My profile", profile_path_for(current_user), class: "win-btn justify-start" %>
+          <% end %>
+          <span class="text-sm break-all py-1"><%= current_user.email %></span>
+          <%= button_to "Log out", destroy_user_session_path, method: :delete, class: "win-btn win-btn-danger w-full" %>
         <% else %>
-          <%= link_to "Log in", new_user_session_path, class: "text-sm text-slate-600 hover:text-slate-900" %>
+          <%= link_to "Log in", new_user_session_path, class: "win-btn win-btn-primary justify-start" %>
         <% end %>
       </div>
-    </nav>
-    <main class="container mx-auto mt-8 px-5">
+    </div>
+
+    <main class="p-4">
       <div id="flash"><%= render "shared/flash" %></div>
       <%= yield %>
     </main>

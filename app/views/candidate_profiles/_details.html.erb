@@ -1,4 +1,4 @@
-<dl class="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+<dl class="win-panel">
   <% [
        ["Phone", candidate_profile.phone],
        ["Location", candidate_profile.location],
@@ -9,9 +9,9 @@
        ["Work experience", candidate_profile.work_experience],
        ["Bio", candidate_profile.bio]
      ].each do |label, value| %>
-    <div class="px-4 py-3">
-      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= label %></dt>
-      <dd class="mt-1 whitespace-pre-line text-sm text-slate-900"><%= value.presence || "—" %></dd>
+    <div class="win-detail-row">
+      <dt class="win-detail-label"><%= label %></dt>
+      <dd class="mt-1 whitespace-pre-line text-sm"><%= value.presence || "—" %></dd>
     </div>
   <% end %>
 </dl>
