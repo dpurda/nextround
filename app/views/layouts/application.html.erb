@@ -20,6 +20,12 @@
         <%= link_to "NextRound", root_path, class: "text-lg font-semibold text-slate-900" %>
         <% if user_signed_in? %>
           <div class="flex items-center gap-4 text-sm text-slate-600">
+            <% if policy(User).index? %>
+              <%= link_to "Invites", invites_path, class: "text-indigo-600 hover:underline" %>
+            <% end %>
+            <% if profile_path_for(current_user) %>
+              <%= link_to "My profile", profile_path_for(current_user), class: "text-indigo-600 hover:underline" %>
+            <% end %>
             <span><%= current_user.email %></span>
             <%= button_to "Log out", destroy_user_session_path, method: :delete,
                   class: "text-slate-600 hover:text-slate-900 cursor-pointer" %>

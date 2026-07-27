@@ -1,0 +1,45 @@
+<div class="mx-auto max-w-3xl">
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-semibold text-slate-900">Invites</h1>
+    <%= link_to "New invite", new_invite_path,
+          class: "rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500" %>
+  </div>
+
+  <% if @invited_users.empty? %>
+    <p class="mt-6 text-sm text-slate-500">No invites yet.</p>
+  <% else %>
+    <table class="mt-6 w-full text-left text-sm">
+      <thead class="text-slate-500">
+        <tr class="border-b border-slate-200">
+          <th class="py-2 font-medium">Email</th>
+          <th class="py-2 font-medium">Role</th>
+          <th class="py-2 font-medium">Status</th>
+          <th class="py-2 font-medium">Invited</th>
+          <th class="py-2 font-medium"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @invited_users.each do |invited_user| %>
+          <tr class="border-b border-slate-100">
+            <td class="py-2 text-slate-900"><%= invited_user.email %></td>
+            <td class="py-2 text-slate-700"><%= invited_user.role.humanize %></td>
+            <td class="py-2">
+              <% if invited_user.pending_invitation? %>
+                <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">Pending</span>
+              <% else %>
+                <span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-800">Claimed</span>
+              <% end %>
+            </td>
+            <td class="py-2 text-slate-500"><%= invited_user.created_at.to_date.iso8601 %></td>
+            <td class="py-2 text-right">
+              <% if policy(invited_user).show? %>
+                <%= link_to invited_user.pending_invitation? ? "View code" : "View profile",
+                      invite_path(invited_user), class: "text-indigo-600 hover:underline" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

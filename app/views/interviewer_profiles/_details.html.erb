@@ -1,0 +1,14 @@
+<dl class="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+  <% [
+       ["Company", interviewer_profile.company],
+       ["Title", interviewer_profile.title],
+       ["Years of experience", interviewer_profile.years_of_experience],
+       ["Areas of expertise", interviewer_profile.expertise],
+       ["Bio", interviewer_profile.bio]
+     ].each do |label, value| %>
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500"><%= label %></dt>
+      <dd class="mt-1 whitespace-pre-line text-sm text-slate-900"><%= value.presence || "—" %></dd>
+    </div>
+  <% end %>
+</dl>

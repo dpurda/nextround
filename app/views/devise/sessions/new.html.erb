@@ -1,7 +1,8 @@
 <div class="mx-auto mt-16 max-w-sm">
   <h1 class="text-2xl font-semibold text-slate-900">Log in to NextRound</h1>
   <p class="mt-1 text-sm text-slate-500">
-    Don't have an account yet? You'll need an invitation code from an admin or interviewer to claim one.
+    Don't have an account yet? You'll need an invitation code from an admin or interviewer —
+    <%= link_to "claim your invite here", new_claim_path, class: "text-indigo-600 hover:underline" %>.
   </p>
   <%= render "shared/form_errors", object: resource %>
   <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "mt-6 space-y-4" }) do |f| %>

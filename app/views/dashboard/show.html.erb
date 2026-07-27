@@ -7,8 +7,9 @@
   </p>
 
   <% unless current_user.profile_complete? %>
-    <div class="mt-6 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
-      Your profile isn't complete yet.
+    <div class="mt-6 flex items-center justify-between rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+      <span>Your profile isn't complete yet.</span>
+      <%= link_to "Complete it now", new_profile_path_for(current_user), class: "font-medium underline" %>
     </div>
   <% end %>
 </div>

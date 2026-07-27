@@ -1,0 +1,30 @@
+<div class="mx-auto max-w-lg">
+  <h1 class="text-2xl font-semibold text-slate-900">
+    <%= @candidate_profile.persisted? ? "Edit your profile" : "Complete your candidate profile" %>
+  </h1>
+  <p class="mt-1 text-sm text-slate-500">
+    This helps interviewers understand your background before a session.
+  </p>
+
+  <%= render "shared/form_errors", object: @candidate_profile %>
+
+  <%= form_with model: @candidate_profile, url: candidate_profile_path, builder: TailwindFormBuilder,
+        html: { class: "mt-6 space-y-4" } do |f| %>
+    <div class="grid grid-cols-2 gap-4">
+      <%= f.labeled_field :phone %>
+      <%= f.labeled_field :location %>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <%= f.labeled_field :current_role, "Current role" %>
+      <%= f.labeled_field :target_role, "Target role" %>
+    </div>
+
+    <%= f.labeled_field :years_of_experience, "Years of experience", as: :number_field %>
+    <%= f.labeled_field :education, "Last school / degree completed" %>
+    <%= f.labeled_field :work_experience, "Work experience", as: :text_area, rows: 3 %>
+    <%= f.labeled_field :bio, as: :text_area, rows: 3 %>
+
+    <%= f.submit "Save profile", class: "w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 cursor-pointer" %>
+  <% end %>
+</div>
