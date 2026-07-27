@@ -22,11 +22,13 @@
 
     <div class="mt-6">
       <% if @invited_user.profile.present? %>
-        <% if @invited_user.candidate? %>
-          <%= render "candidate_profiles/details", candidate_profile: @invited_user.profile %>
-        <% else %>
-          <%= render "interviewer_profiles/details", interviewer_profile: @invited_user.profile %>
-        <% end %>
+        <div class="win-panel">
+          <% if @invited_user.candidate? %>
+            <%= render "candidate_profiles/details", candidate_profile: @invited_user.profile %>
+          <% else %>
+            <%= render "interviewer_profiles/details", interviewer_profile: @invited_user.profile %>
+          <% end %>
+        </div>
       <% else %>
         <p class="text-sm text-secondary">They haven't completed their profile yet.</p>
       <% end %>

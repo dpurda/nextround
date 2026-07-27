@@ -1,10 +1,10 @@
 <div class="mx-auto max-w-lg">
-  <div class="flex items-center justify-between">
-    <h1 class="text-xl font-semibold">Your profile</h1>
-    <%= link_to "Edit", edit_candidate_profile_path, class: "win-btn win-btn-primary" %>
-  </div>
+  <div class="win-panel">
+    <div class="win-panel-header flex items-center justify-between px-4 py-3">
+      <h1 class="win-detail-label">Your Profile</h1>
+      <%= icon_edit_button edit_candidate_profile_path, label: "Edit profile" %>
+    </div>
 
-  <div class="mt-6">
     <%= render "candidate_profiles/details", candidate_profile: @candidate_profile %>
   </div>
 </div>
