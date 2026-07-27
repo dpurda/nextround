@@ -186,25 +186,3 @@ through and *why* — is in [`DESIGN.md`](DESIGN.md). The short version:
 - A candidate's profile is meant to be filled in like an actual CV
   (multiple work history and education entries), not a single free-text
   "about me" blob.
-
-## Known limitations
-
-- No email delivery anywhere.
-- SQLite is single-writer — fine at this scale, would need to move to
-  Postgres before running with genuinely concurrent writers.
-- Single flat role set, no per-organization data isolation.
-- Profile completion (candidate or interviewer) is prompted after claiming
-  an invite but not strictly enforced before an interview can be scheduled
-  against that person.
-
-## Future improvements
-
-- Optional email-based invite delivery as an alternative to manual code
-  sharing, for teams where out-of-band sharing isn't practical.
-- Skills/tags on interviews with trend breakdowns per skill.
-- Interview templates / a shared question bank.
-- CSV/PDF export of reports, and a PDF export of a candidate's CV.
-- Read replica + fragment caching if reporting load ever grew enough to
-  matter.
-- System-level (headless browser) tests for the JS-driven interactions
-  listed above.
