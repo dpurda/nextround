@@ -28,9 +28,7 @@
             <td class="py-2 text-slate-700"><%= user_display_name(interview.interviewer) %></td>
             <td class="py-2 text-slate-700"><%= user_display_name(interview.candidate) %></td>
             <td class="py-2">
-              <span class="rounded-full px-2 py-0.5 text-xs font-medium <%= status_badge_class(interview.status) %>">
-                <%= interview.status.humanize %>
-              </span>
+              <%= render "status_badge", interview: interview %>
             </td>
             <td class="py-2 text-slate-500"><%= interview.scheduled_at&.strftime("%b %-d, %Y %H:%M") || "—" %></td>
             <td class="py-2 text-right">

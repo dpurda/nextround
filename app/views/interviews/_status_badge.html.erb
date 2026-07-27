@@ -1,0 +1,14 @@
+<% if policy(interview).update? %>
+  <%= form_with url: update_status_interview_path(interview), method: :patch do %>
+    <select name="interview[status]" onchange="this.form.requestSubmit()"
+            class="cursor-pointer rounded-full border-0 py-0.5 pl-2 pr-6 text-xs font-medium focus:ring-2 focus:ring-indigo-500 <%= status_badge_class(interview.status) %>">
+      <% Interview.statuses.keys.each do |status| %>
+        <option value="<%= status %>" <%= "selected" if interview.status == status %>><%= status.humanize %></option>
+      <% end %>
+    </select>
+  <% end %>
+<% else %>
+  <span class="rounded-full px-2 py-0.5 text-xs font-medium <%= status_badge_class(interview.status) %>">
+    <%= interview.status.humanize %>
+  </span>
+<% end %>

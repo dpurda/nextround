@@ -177,4 +177,53 @@ RSpec.describe "Interviews", type: :request do
       expect(interview.reload.status).to eq("completed")
     end
   end
+
+  describe "PATCH /interviews/:id/update_status" do
+    it "lets the owning interviewer change the status from the index page dropdown" do
+      interview = create(:interview, status: :scheduled)
+      sign_in interview.interviewer
+
+      patch update_status_interview_path(interview),
+        params: { interview: { status: "in_progress" } },
+        headers: { "HTTP_REFERER" => interviews_path }
+
+      expect(response).to redirect_to(interviews_path)
+      expect(interview.reload.status).to eq("in_progress")
+    end
+
+    it "redirects back to the show page when triggered from there" do
+      interview = create(:interview, status: :scheduled)
+      sign_in interview.interviewer
+
+      patch update_status_interview_path(interview),
+        params: { interview: { status: "in_progress" } },
+        headers: { "HTTP_REFERER" => interview_path(interview) }
+
+      expect(response).to redirect_to(interview_path(interview))
+    end
+
+    it "is forbidden for the candidate on the interview" do
+      interview = create(:interview, status: :scheduled)
+      sign_in interview.candidate
+
+      patch update_status_interview_path(interview), params: { interview: { status: "in_progress" } }
+
+      expect(response).to redirect_to(root_path)
+      expect(interview.reload.status).to eq("scheduled")
+    end
+
+    it "blocks marking completed without feedback and shows an alert" do
+      interview = create(:interview, status: :scheduled)
+      sign_in interview.interviewer
+
+      patch update_status_interview_path(interview),
+        params: { interview: { status: "completed" } },
+        headers: { "HTTP_REFERER" => interviews_path }
+
+      expect(response).to redirect_to(interviews_path)
+      follow_redirect!
+      expect(response.body).to include("cannot be completed without feedback")
+      expect(interview.reload.status).to eq("scheduled")
+    end
+  end
 end

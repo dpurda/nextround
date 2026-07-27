@@ -1,5 +1,5 @@
 class InterviewsController < ApplicationController
-  before_action :set_interview, only: %i[show edit update]
+  before_action :set_interview, only: %i[show edit update update_status]
   before_action :load_form_collections, only: %i[new create edit update]
 
   def index
@@ -37,6 +37,16 @@ class InterviewsController < ApplicationController
       redirect_to @interview, notice: "Interview updated."
     else
       render :edit, status: :unprocessable_content
+    end
+  end
+
+  def update_status
+    authorize @interview, :update?
+
+    if @interview.update(status: params.dig(:interview, :status))
+      redirect_back fallback_location: interviews_path, notice: "Status updated."
+    else
+      redirect_back fallback_location: interviews_path, alert: @interview.errors.full_messages.to_sentence
     end
   end
 
