@@ -24,7 +24,7 @@
       <% if @invited_user.profile.present? %>
         <div class="win-panel">
           <% if @invited_user.candidate? %>
-            <%= render "candidate_profiles/details", candidate_profile: @invited_user.profile %>
+            <%= render "candidate_profiles/cv", candidate_profile: @invited_user.profile %>
           <% else %>
             <%= render "interviewer_profiles/details", interviewer_profile: @invited_user.profile %>
           <% end %>

@@ -1,0 +1,71 @@
+<div class="p-6">
+  <div class="cv-header">
+    <h2 class="text-2xl font-semibold"><%= candidate_profile.user.name %></h2>
+    <p class="mt-1 text-secondary"><%= candidate_profile.current_role %></p>
+
+    <div class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-secondary">
+      <span><%= candidate_profile.phone %></span>
+      <span><%= candidate_profile.location %></span>
+      <span><%= candidate_profile.user.email %></span>
+    </div>
+
+    <div class="mt-3 flex flex-wrap gap-2">
+      <% if candidate_profile.target_role.present? %>
+        <span class="win-badge win-badge-neutral">Targeting: <%= candidate_profile.target_role %></span>
+      <% end %>
+      <% if candidate_profile.years_of_experience.present? %>
+        <span class="win-badge win-badge-neutral"><%= pluralize(candidate_profile.years_of_experience, "year") %> experience</span>
+      <% end %>
+    </div>
+  </div>
+
+  <% if candidate_profile.bio.present? %>
+    <div class="mt-6">
+      <h3 class="win-detail-label mb-2">Summary</h3>
+      <p class="whitespace-pre-line text-sm"><%= candidate_profile.bio %></p>
+    </div>
+  <% end %>
+
+  <div class="mt-6">
+    <h3 class="win-detail-label mb-3">Work experience</h3>
+    <% if candidate_profile.work_experiences.empty? %>
+      <p class="text-sm text-secondary">No work experience added yet.</p>
+    <% else %>
+      <div class="space-y-4">
+        <% candidate_profile.work_experiences.each do |work_experience| %>
+          <div class="cv-entry">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+              <p class="font-semibold"><%= work_experience.title %></p>
+              <p class="shrink-0 text-xs text-secondary"><%= date_range_for(work_experience.start_date, work_experience.end_date) %></p>
+            </div>
+            <p class="text-sm text-secondary"><%= work_experience.company %></p>
+            <% if work_experience.description.present? %>
+              <p class="mt-1 whitespace-pre-line text-sm"><%= work_experience.description %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <h3 class="win-detail-label mb-3">Education</h3>
+    <% if candidate_profile.educations.empty? %>
+      <p class="text-sm text-secondary">No education added yet.</p>
+    <% else %>
+      <div class="space-y-4">
+        <% candidate_profile.educations.each do |education| %>
+          <div class="cv-entry">
+            <div class="flex flex-wrap items-baseline justify-between gap-x-4">
+              <p class="font-semibold">
+                <%= education.degree %><%= " in #{education.field_of_study}" if education.field_of_study.present? %>
+              </p>
+              <p class="shrink-0 text-xs text-secondary"><%= date_range_for(education.start_date, education.end_date) %></p>
+            </div>
+            <p class="text-sm text-secondary"><%= education.institution %></p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

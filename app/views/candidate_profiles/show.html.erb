@@ -1,10 +1,10 @@
-<div class="mx-auto max-w-lg">
+<div class="mx-auto max-w-2xl">
   <div class="win-panel">
     <div class="win-panel-header flex items-center justify-between px-4 py-3">
       <h1 class="win-detail-label">Your Profile</h1>
       <%= icon_edit_button edit_candidate_profile_path, label: "Edit profile" %>
     </div>
 
-    <%= render "candidate_profiles/details", candidate_profile: @candidate_profile %>
+    <%= render "candidate_profiles/cv", candidate_profile: @candidate_profile %>
   </div>
 </div>

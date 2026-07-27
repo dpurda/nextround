@@ -179,6 +179,19 @@ form without a gem" recipe:
   JS bookkeeping — if it's left empty on submit, it's silently discarded
   rather than raising a validation error.
 
+### Candidate profile read view (`candidate_profiles/_cv`)
+The candidate profile's read-only view is deliberately laid out like an
+actual CV/résumé rather than a generic key-value `<dl>`: a header block
+(`.cv-header`) with name, current role, contact line, and target-role/
+years-of-experience as `.win-badge` chips, then Summary/Work
+experience/Education as labeled sections. Each work/education entry is a
+`.cv-entry` — a left border accent (2px `--border`) with the title/degree
+bold on the left and the date range (`date_range_for` helper, "Mon YYYY –
+Mon YYYY" or "– Present") right-aligned on the same line. This partial is
+shared between the candidate's own "My profile" page and an admin/inviter
+viewing a claimed candidate's profile from the invite show page — don't
+fork it per caller, both contexts want the same CV rendering.
+
 ### Tables / lists
 White background, header row with light gray background + semibold text,
 1px border between rows (not full cell borders), row hover = very light

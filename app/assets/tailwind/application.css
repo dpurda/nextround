@@ -335,6 +335,18 @@
     color: var(--win-text-secondary);
   }
 
+  /* --- CV-style entries (candidate profile work experience / education) --- */
+
+  .cv-entry {
+    border-left: 2px solid var(--win-border);
+    padding-left: 1rem;
+  }
+
+  .cv-header {
+    border-bottom: 1px solid var(--win-border);
+    padding-bottom: 1rem;
+  }
+
   /* --- Search/filter forms (Ransack) --- */
 
   .win-field-label {
