@@ -10,7 +10,62 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_27_091406) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_27_093730) do
+  create_table "candidate_profiles", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "phone"
+    t.string "current_role"
+    t.integer "years_of_experience"
+    t.string "target_role"
+    t.text "bio"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "education"
+    t.string "location"
+    t.text "work_experience"
+    t.index ["user_id"], name: "index_candidate_profiles_on_user_id"
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.integer "interview_id", null: false
+    t.text "strengths", null: false
+    t.text "improvements", null: false
+    t.integer "recommendation", null: false
+    t.integer "overall_rating", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["interview_id"], name: "index_feedbacks_on_interview_id", unique: true
+  end
+
+  create_table "interviewer_profiles", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.text "expertise"
+    t.integer "years_of_experience"
+    t.string "company"
+    t.string "title"
+    t.text "bio"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_interviewer_profiles_on_user_id"
+  end
+
+  create_table "interviews", force: :cascade do |t|
+    t.integer "interviewer_id", null: false
+    t.integer "candidate_id", null: false
+    t.string "title", null: false
+    t.integer "interview_type", default: 0, null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "scheduled_at"
+    t.integer "duration_minutes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["candidate_id"], name: "index_interviews_on_candidate_id"
+    t.index ["interviewer_id"], name: "index_interviews_on_interviewer_id"
+    t.index ["scheduled_at"], name: "index_interviews_on_scheduled_at"
+    t.index ["status"], name: "index_interviews_on_status"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -28,5 +83,10 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_091406) do
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
   end
 
+  add_foreign_key "candidate_profiles", "users"
+  add_foreign_key "feedbacks", "interviews"
+  add_foreign_key "interviewer_profiles", "users"
+  add_foreign_key "interviews", "users", column: "candidate_id"
+  add_foreign_key "interviews", "users", column: "interviewer_id"
   add_foreign_key "users", "users", column: "invited_by_id"
 end

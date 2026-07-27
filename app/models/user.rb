@@ -1,11 +1,4 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable, :omniauthable, :recoverable
-  #
-  # :registerable is intentionally omitted — there is no public signup route.
-  # Every account is created via an invite (see #invite!) and activated via
-  # the /claim flow. :recoverable is omitted too since there's no outbound
-  # email to deliver a password reset link.
   devise :database_authenticatable, :rememberable, :validatable
 
   enum :role, { candidate: 0, interviewer: 1, admin: 2 }, default: :candidate
@@ -61,6 +54,14 @@ class User < ApplicationRecord
 
   def profile_complete?
     admin? || profile.present?
+  end
+
+  def self.ransackable_attributes(_auth_object = nil)
+    %w[name email role created_at claimed_at]
+  end
+
+  def self.ransackable_associations(_auth_object = nil)
+    %w[candidate_profile interviewer_profile]
   end
 
   class << self
