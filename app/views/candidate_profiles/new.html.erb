@@ -1,29 +1,72 @@
-<div class="mx-auto max-w-lg">
+<div class="mx-auto max-w-2xl">
   <h1 class="text-xl font-semibold">
     <%= @candidate_profile.persisted? ? "Edit your profile" : "Complete your candidate profile" %>
   </h1>
   <p class="mt-1 text-sm text-secondary">
-    This helps interviewers understand your background before a session.
+    This helps interviewers understand your background before a session — fill it in like a CV.
   </p>
 
   <%= render "shared/form_errors", object: @candidate_profile %>
 
   <%= form_with model: @candidate_profile, url: candidate_profile_path, builder: FluentFormBuilder,
-        html: { class: "mt-6 space-y-4" } do |f| %>
-    <div class="grid grid-cols-2 gap-4">
-      <%= f.labeled_field :phone %>
-      <%= f.labeled_field :location %>
+        html: { class: "mt-6 space-y-6" } do |f| %>
+    <div class="win-panel p-4">
+      <h2 class="win-detail-label mb-3">Basics</h2>
+
+      <div class="grid grid-cols-2 gap-4">
+        <%= f.labeled_field :phone %>
+        <%= f.labeled_field :location %>
+      </div>
+
+      <div class="mt-4 grid grid-cols-2 gap-4">
+        <%= f.labeled_field :current_role, "Current role" %>
+        <%= f.labeled_field :target_role, "Target role" %>
+      </div>
+
+      <div class="mt-4">
+        <%= f.labeled_field :years_of_experience, "Years of experience", as: :number_field %>
+      </div>
+
+      <div class="mt-4">
+        <%= f.labeled_field :bio, "Summary", as: :text_area, rows: 3 %>
+      </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4">
-      <%= f.labeled_field :current_role, "Current role" %>
-      <%= f.labeled_field :target_role, "Target role" %>
+    <div data-controller="nested-form">
+      <h2 class="win-detail-label mb-3">Work experience</h2>
+
+      <div data-nested-form-target="container">
+        <%= f.fields_for :work_experiences do |wf| %>
+          <%= render "work_experience_fields", f: wf %>
+        <% end %>
+      </div>
+
+      <template data-nested-form-target="template">
+        <%= f.fields_for :work_experiences, WorkExperience.new, child_index: "NEW_RECORD" do |wf| %>
+          <%= render "work_experience_fields", f: wf %>
+        <% end %>
+      </template>
+
+      <button type="button" class="win-btn" data-action="nested-form#add">+ Add work experience</button>
     </div>
 
-    <%= f.labeled_field :years_of_experience, "Years of experience", as: :number_field %>
-    <%= f.labeled_field :education, "Last school / degree completed" %>
-    <%= f.labeled_field :work_experience, "Work experience", as: :text_area, rows: 3 %>
-    <%= f.labeled_field :bio, as: :text_area, rows: 3 %>
+    <div data-controller="nested-form">
+      <h2 class="win-detail-label mb-3">Education</h2>
+
+      <div data-nested-form-target="container">
+        <%= f.fields_for :educations do |ef| %>
+          <%= render "education_fields", f: ef %>
+        <% end %>
+      </div>
+
+      <template data-nested-form-target="template">
+        <%= f.fields_for :educations, Education.new, child_index: "NEW_RECORD" do |ef| %>
+          <%= render "education_fields", f: ef %>
+        <% end %>
+      </template>
+
+      <button type="button" class="win-btn" data-action="nested-form#add">+ Add education</button>
+    </div>
 
     <%= f.submit "Save profile", class: "win-btn win-btn-primary w-full cursor-pointer" %>
   <% end %>
