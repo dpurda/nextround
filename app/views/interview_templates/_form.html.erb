@@ -1,0 +1,23 @@
+<%= form_with model: @interview_template, builder: FluentFormBuilder, html: { class: "space-y-6" } do |f| %>
+  <%= f.labeled_field :name %>
+  <div>
+    <%= f.label :interview_type %>
+    <%= f.select :interview_type, InterviewTemplate.interview_types.keys.map { |t| [t.humanize, t] } %>
+  </div>
+  <%= f.labeled_field :description, "Description", as: :text_area, rows: 3 %>
+  <div data-controller="nested-form">
+    <h2 class="win-detail-label mb-3">Questions</h2>
+    <div data-nested-form-target="container">
+      <%= f.fields_for :template_questions do |qf| %>
+        <%= render "template_question_fields", f: qf %>
+      <% end %>
+    </div>
+    <template data-nested-form-target="template">
+      <%= f.fields_for :template_questions, TemplateQuestion.new, child_index: "NEW_RECORD" do |qf| %>
+        <%= render "template_question_fields", f: qf %>
+      <% end %>
+    </template>
+    <button type="button" class="win-btn" data-action="nested-form#add">+ Add question</button>
+  </div>
+  <%= f.submit @interview_template.persisted? ? "Save changes" : "Create template", class: "win-btn win-btn-primary w-full cursor-pointer" %>
+<% end %>

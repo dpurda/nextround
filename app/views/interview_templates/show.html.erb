@@ -1,0 +1,36 @@
+<div class="mx-auto max-w-2xl">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-xl font-semibold"><%= @interview_template.name %></h1>
+      <p class="text-sm text-secondary">
+        <%= @interview_template.interview_type.humanize %> ·
+        <%= @interview_template.created_by ? user_display_name(@interview_template.created_by) : "Unknown" %>
+      </p>
+    </div>
+    <% if policy(@interview_template).update? %>
+      <%= icon_edit_button edit_interview_template_path(@interview_template), label: "Edit template" %>
+    <% end %>
+  </div>
+  <% if @interview_template.description.present? %>
+    <p class="mt-4 text-sm"><%= @interview_template.description %></p>
+  <% end %>
+  <div class="win-panel mt-6">
+    <div class="win-panel-header px-4 py-3">
+      <h2 class="win-detail-label">Questions</h2>
+    </div>
+    <% if @interview_template.template_questions.empty? %>
+      <p class="p-4 text-sm text-secondary">No questions yet.</p>
+    <% else %>
+      <% @interview_template.template_questions.each do |question| %>
+        <div class="win-detail-row text-sm"><%= question.prompt %></div>
+      <% end %>
+    <% end %>
+  </div>
+  <% if policy(@interview_template).destroy? %>
+    <div class="mt-6">
+      <%= button_to "Delete template", interview_template_path(@interview_template), method: :delete,
+            class: "win-btn win-btn-danger",
+            data: { turbo_confirm: "Delete this template? This can't be undone." } %>
+    </div>
+  <% end %>
+</div>

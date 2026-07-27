@@ -1,0 +1,49 @@
+<div class="mx-auto max-w-6xl">
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <h1 class="text-xl font-semibold">Templates</h1>
+    <% if policy(InterviewTemplate).new? %>
+      <%= icon_add_button new_interview_template_path, label: "New template" %>
+    <% end %>
+  </div>
+  <%= render layout: "shared/search_form", locals: { q: @q, url: interview_templates_path } do |f| %>
+    <div>
+      <%= f.label :name_or_description_cont, "Search", class: "win-field-label" %>
+      <%= f.search_field :name_or_description_cont, class: "win-input", placeholder: "Name or description" %>
+    </div>
+    <div>
+      <%= f.label :interview_type_eq, "Type", class: "win-field-label" %>
+      <%= f.select :interview_type_eq, InterviewTemplate.interview_types.map { |label, value| [label.humanize, value] }, { include_blank: "Any" }, class: "win-input" %>
+    </div>
+  <% end %>
+  <% if @interview_templates.empty? %>
+    <p class="mt-6 text-sm text-secondary">No templates found.</p>
+  <% else %>
+    <div class="mt-6 overflow-x-auto">
+      <table class="win-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th class="hidden sm:table-cell">Type</th>
+            <th>Questions</th>
+            <th class="hidden md:table-cell">Created by</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @interview_templates.each do |interview_template| %>
+            <tr>
+              <td><%= interview_template.name %></td>
+              <td class="hidden sm:table-cell"><%= interview_template.interview_type.humanize %></td>
+              <td><%= interview_template.template_questions.size %></td>
+              <td class="hidden md:table-cell text-secondary"><%= interview_template.created_by ? user_display_name(interview_template.created_by) : "—" %></td>
+              <td class="text-right">
+                <%= link_to "View", interview_template_path(interview_template) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= render "shared/pagination", pagy: @pagy %>
+  <% end %>
+</div>
