@@ -178,6 +178,34 @@ form without a gem" recipe:
   can always show one extra blank row for "the next entry" without extra
   JS bookkeeping — if it's left empty on submit, it's silently discarded
   rather than raising a validation error.
+- Reused twice more beyond the original CV use: a template's question list
+  (`interview_templates/_form`) and, per interview, the interviewer's bulk
+  question editor (`interviews/_form`) — same recipe, a single `prompt`
+  field instead of a multi-field CV row.
+
+### Per-row inline editing (Turbo Frame per record)
+The Feedback card's edit-in-place pattern (a single `turbo_frame_tag
+:feedback`, swapped between `feedbacks/_card` and `feedbacks/edit` on save)
+extends to a *list* of records the same way: each interview question row on
+the interview show page (`interview_questions/_question_row`) is its own
+`turbo_frame_tag dom_id(question)`, and its edit form
+(`interview_questions/edit`) is wrapped in that same frame id. Clicking a
+row's edit icon swaps just that row into its edit form; saving replaces
+just that frame via `turbo_stream.replace(dom_id(question), ...)` from
+`InterviewQuestionsController#update`. "Cancel" is a plain link back to the
+interview's full show page rather than a second turbo_stream action —
+because the frame id on the show page matches, Turbo automatically
+extracts just that one `<turbo-frame>` from the full-page response and
+swaps it in.
+
+This controller also demonstrates the pattern for "two roles write
+different fields on the same record": `InterviewQuestionPolicy#update?`
+authorizes either the owning interviewer/admin *or* the candidate on that
+interview, while `InterviewQuestionsController#interview_question_params`
+separately switches which attributes are permitted — `covered`/`notes` or
+`answer` — based on `current_user.candidate?`. The authorization check and
+the field-level write boundary are kept as two distinct checks on purpose,
+so neither role can widen its own write access by tampering with the form.
 
 ### Candidate profile read view (`candidate_profiles/_cv`)
 The candidate profile's read-only view is deliberately laid out like an
