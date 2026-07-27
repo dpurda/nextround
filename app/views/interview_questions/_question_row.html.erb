@@ -7,10 +7,18 @@
           <%= question.covered? ? "Covered" : "Not covered" %>
         </span>
         <% if policy(question).update? %>
-          <%= icon_edit_button edit_interview_interview_question_path(question.interview, question), label: "Edit question" %>
+          <%= icon_edit_button edit_interview_interview_question_path(question.interview, question),
+                label: current_user.candidate? ? "Answer question" : "Edit question" %>
         <% end %>
       </div>
     </div>
+
+    <% if question.answer.present? %>
+      <p class="mt-2 text-sm"><span class="font-semibold">Answer:</span> <%= question.answer %></p>
+    <% elsif current_user.candidate? && policy(question).update? %>
+      <p class="mt-2 text-sm text-secondary">You haven't answered yet.</p>
+    <% end %>
+
     <% if question.notes.present? %>
       <p class="mt-1 text-sm text-secondary"><%= question.notes %></p>
     <% end %>

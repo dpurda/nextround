@@ -34,6 +34,7 @@ class InterviewQuestionsController < ApplicationController
   end
 
   def interview_question_params
-    params.require(:interview_question).permit(:covered, :notes)
+    permitted_attrs = current_user.candidate? ? [ :answer ] : [ :covered, :notes ]
+    params.require(:interview_question).permit(*permitted_attrs)
   end
 end

@@ -2,15 +2,19 @@
       builder: FluentFormBuilder, html: { class: "space-y-3" } do |f| %>
   <p class="text-sm font-semibold"><%= question.prompt %></p>
 
-  <div class="flex items-center gap-2">
-    <%= f.check_box :covered %>
-    <%= f.label :covered, "Covered", class: "font-semibold text-sm" %>
-  </div>
+  <% if current_user.candidate? %>
+    <%= f.labeled_field :answer, "Your answer", as: :text_area, rows: 3 %>
+  <% else %>
+    <div class="flex items-center gap-2">
+      <%= f.check_box :covered %>
+      <%= f.label :covered, "Covered", class: "font-semibold text-sm" %>
+    </div>
 
-  <%= f.labeled_field :notes, "Notes", as: :text_area, rows: 2 %>
+    <%= f.labeled_field :notes, "Notes", as: :text_area, rows: 2 %>
+  <% end %>
 
   <div class="flex gap-2">
-    <%= f.submit "Save", class: "win-btn win-btn-primary" %>
+    <%= f.submit current_user.candidate? ? "Save answer" : "Save", class: "win-btn win-btn-primary" %>
     <%= link_to "Cancel", interview_path(question.interview), class: "win-btn" %>
   </div>
 <% end %>
