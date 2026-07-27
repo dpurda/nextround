@@ -39,4 +39,21 @@ RSpec.describe Interview, type: :model do
       expect(interview).to be_valid
     end
   end
+
+  describe "creating from a template" do
+    it "copies the template's questions onto the interview" do
+      template = create(:interview_template)
+      create(:template_question, interview_template: template, prompt: "Q1")
+      create(:template_question, interview_template: template, prompt: "Q2")
+
+      interview = create(:interview, interview_template: template)
+
+      expect(interview.interview_questions.pluck(:prompt)).to contain_exactly("Q1", "Q2")
+    end
+
+    it "leaves interview_questions empty when no template is used" do
+      interview = create(:interview)
+      expect(interview.interview_questions).to be_empty
+    end
+  end
 end

@@ -115,6 +115,15 @@ RSpec.describe "Interviews", type: :request do
       get new_interview_path
       expect(response).to redirect_to(root_path)
     end
+
+    it "preselects the template passed via query param" do
+      template = create(:interview_template)
+      sign_in create(:user, :interviewer)
+
+      get new_interview_path(interview_template_id: template.id)
+
+      expect(response.body).to include(%(<option selected="selected" value="#{template.id}">#{template.name}</option>))
+    end
   end
 
   describe "POST /interviews" do
@@ -162,6 +171,23 @@ RSpec.describe "Interviews", type: :request do
       end.not_to change(Interview, :count)
 
       expect(response).to redirect_to(root_path)
+    end
+
+    it "copies the selected template's questions onto the new interview" do
+      template = create(:interview_template)
+      create(:template_question, interview_template: template, prompt: "Explain block vs proc vs lambda")
+      candidate = create(:user, :candidate)
+      sign_in create(:user, :interviewer)
+
+      post interviews_path, params: {
+        interview: {
+          title: "Ruby screen", interview_type: "technical", candidate_id: candidate.id,
+          interview_template_id: template.id, scheduled_at: 1.day.from_now
+        }
+      }
+
+      created = Interview.find_by(title: "Ruby screen")
+      expect(created.interview_questions.pluck(:prompt)).to contain_exactly("Explain block vs proc vs lambda")
     end
   end
 

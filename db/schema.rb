@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_07_27_230000) do
+ActiveRecord::Schema[8.0].define(version: 2026_07_27_232000) do
   create_table "candidate_profiles", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "phone"
@@ -77,6 +77,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_230000) do
     t.text "bio"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "expertise"
     t.index ["user_id"], name: "index_interviewer_profiles_on_user_id"
   end
 
@@ -96,24 +97,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_230000) do
     t.index ["interviewer_id"], name: "index_interviews_on_interviewer_id"
     t.index ["scheduled_at"], name: "index_interviews_on_scheduled_at"
     t.index ["status"], name: "index_interviews_on_status"
-  end
-
-  create_table "skill_taggings", force: :cascade do |t|
-    t.integer "skill_id", null: false
-    t.string "taggable_type", null: false
-    t.integer "taggable_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["skill_id"], name: "index_skill_taggings_on_skill_id"
-    t.index ["taggable_type", "taggable_id", "skill_id"], name: "index_skill_taggings_on_taggable_and_skill", unique: true
-    t.index ["taggable_type", "taggable_id"], name: "index_skill_taggings_on_taggable"
-  end
-
-  create_table "skills", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index "LOWER(name)", name: "index_skills_on_lower_name", unique: true
   end
 
   create_table "template_questions", force: :cascade do |t|
@@ -162,7 +145,6 @@ ActiveRecord::Schema[8.0].define(version: 2026_07_27_230000) do
   add_foreign_key "interviews", "interview_templates"
   add_foreign_key "interviews", "users", column: "candidate_id"
   add_foreign_key "interviews", "users", column: "interviewer_id"
-  add_foreign_key "skill_taggings", "skills"
   add_foreign_key "template_questions", "interview_templates"
   add_foreign_key "users", "users", column: "invited_by_id"
   add_foreign_key "work_experiences", "candidate_profiles"

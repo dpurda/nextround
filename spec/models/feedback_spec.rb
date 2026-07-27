@@ -31,4 +31,18 @@ RSpec.describe Feedback, type: :model do
     duplicate = build(:feedback, interview: interview)
     expect(duplicate).not_to be_valid
   end
+
+  describe "creating feedback" do
+    it "marks the interview completed" do
+      interview = create(:interview, status: :scheduled)
+      create(:feedback, interview: interview)
+      expect(interview.reload.status).to eq("completed")
+    end
+
+    it "does not revive a cancelled interview" do
+      interview = create(:interview, status: :cancelled)
+      create(:feedback, interview: interview)
+      expect(interview.reload.status).to eq("cancelled")
+    end
+  end
 end
