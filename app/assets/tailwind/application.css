@@ -334,4 +334,52 @@
     letter-spacing: 0.02em;
     color: var(--win-text-secondary);
   }
+
+  /* --- Search/filter forms (Ransack) --- */
+
+  .win-field-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  /* --- Pagination (Pagy's series_nav) --- */
+
+  .series-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .series-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border: 1px solid var(--win-border);
+    background: var(--win-surface);
+    color: var(--win-text);
+    text-decoration: none;
+    font-size: 0.8125rem;
+  }
+
+  .series-nav a:hover {
+    background: var(--win-page-bg);
+  }
+
+  .series-nav a[aria-disabled="true"] {
+    color: var(--win-text-disabled);
+    cursor: default;
+    background: var(--win-page-bg);
+  }
+
+  .series-nav a[aria-current="page"] {
+    background: var(--win-accent);
+    color: #FFFFFF;
+    border-color: var(--win-accent);
+  }
 }

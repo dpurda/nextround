@@ -3,7 +3,10 @@ class InvitesController < ApplicationController
 
   def index
     authorize User
-    @invited_users = policy_scope(User).order(created_at: :desc)
+    @q = policy_scope(User).ransack(params[:q])
+    @q.sorts = "created_at desc" if @q.sorts.empty?
+
+    @pagy, @invited_users = pagy(@q.result)
   end
 
   def new

@@ -3,7 +3,10 @@ class InterviewsController < ApplicationController
   before_action :load_form_collections, only: %i[new create edit update]
 
   def index
-    @interviews = policy_scope(Interview).includes(:interviewer, :candidate, :feedback).order(scheduled_at: :desc)
+    @q = policy_scope(Interview).ransack(params[:q])
+    @q.sorts = "scheduled_at desc" if @q.sorts.empty?
+
+    @pagy, @interviews = pagy(@q.result.includes(:interviewer, :candidate, :feedback))
   end
 
   def show
