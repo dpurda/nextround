@@ -71,5 +71,13 @@ RSpec.describe "Dashboard", type: :request do
       get root_path
       expect(response.body).not_to include(">My profile<")
     end
+
+    it "shows the interviews nav link to every role" do
+      %i[admin interviewer candidate].each do |role|
+        sign_in create(:user, role)
+        get root_path
+        expect(response.body).to include(">Interviews<")
+      end
+    end
   end
 end
