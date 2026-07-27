@@ -35,6 +35,68 @@ RSpec.describe "Interviews", type: :request do
       expect(response.body).to include(mine.title)
       expect(response.body).not_to include(other.title)
     end
+
+    it "searches by title across the free-text query" do
+      match = create(:interview, title: "Ruby backend screen")
+      no_match = create(:interview, title: "System design round")
+
+      sign_in create(:user, :admin)
+      get interviews_path, params: { q: { title_or_interviewer_name_or_interviewer_email_or_candidate_name_or_candidate_email_cont: "Ruby" } }
+
+      expect(response.body).to include(match.title)
+      expect(response.body).not_to include(no_match.title)
+    end
+
+    it "searches by candidate name" do
+      match = create(:interview, title: "Match me")
+      match.candidate.update!(name: "Zed Zephyr")
+      no_match = create(:interview, title: "Skip me")
+
+      sign_in create(:user, :admin)
+      get interviews_path, params: { q: { title_or_interviewer_name_or_interviewer_email_or_candidate_name_or_candidate_email_cont: "Zephyr" } }
+
+      expect(response.body).to include(match.title)
+      expect(response.body).not_to include(no_match.title)
+    end
+
+    it "filters by status" do
+      scheduled = create(:interview, title: "Scheduled one", status: :scheduled)
+      cancelled = create(:interview, title: "Cancelled one", status: :cancelled)
+
+      sign_in create(:user, :admin)
+      # Ransack casts _eq for integer columns with .to_i rather than translating Rails enum
+      # string labels — the real form submits the enum's integer value, so the test does too.
+      get interviews_path, params: { q: { status_eq: Interview.statuses[:cancelled] } }
+
+      expect(response.body).to include(cancelled.title)
+      expect(response.body).not_to include(scheduled.title)
+    end
+
+    it "filters by feedback recommendation" do
+      interview = create(:interview, title: "Hire candidate")
+      create(:feedback, interview: interview, recommendation: :hire)
+      other = create(:interview, title: "No feedback")
+
+      sign_in create(:user, :admin)
+      # Enum integer value, not the string label — see the "filters by status" test above for why.
+      get interviews_path, params: { q: { feedback_recommendation_eq: Feedback.recommendations[:hire] } }
+
+      expect(response.body).to include(interview.title)
+      expect(response.body).not_to include(other.title)
+    end
+
+    it "paginates results" do
+      admin = create(:user, :admin)
+      17.times { |i| create(:interview, title: "Paginated interview #{i}") }
+
+      sign_in admin
+      get interviews_path
+
+      expect(response.body).to include("series-nav")
+
+      get interviews_path, params: { page: 2 }
+      expect(response).to have_http_status(:ok)
+    end
   end
 
   describe "GET /interviews/new" do

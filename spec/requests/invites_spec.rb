@@ -32,6 +32,54 @@ RSpec.describe "Invites", type: :request do
       get invites_path
       expect(response).to redirect_to(root_path)
     end
+
+    it "searches by email or name" do
+      admin = create(:user, :admin)
+      match = create(:user, :pending_invitation, email: "zephyr@example.com", invited_by: admin)
+      no_match = create(:user, :pending_invitation, email: "other@example.com", invited_by: admin)
+
+      sign_in admin
+      get invites_path, params: { q: { email_or_name_cont: "zephyr" } }
+
+      expect(response.body).to include(match.email)
+      expect(response.body).not_to include(no_match.email)
+    end
+
+    it "filters by role" do
+      admin = create(:user, :admin)
+      candidate = create(:user, :pending_invitation, email: "cand@example.com", invited_by: admin)
+      interviewer = create(:user, :pending_invitation, :interviewer, email: "int@example.com", invited_by: admin)
+
+      sign_in admin
+      # Ransack casts _eq for integer columns with .to_i rather than translating Rails enum
+      # string labels — the real form submits the enum's integer value, so the test does too.
+      get invites_path, params: { q: { role_eq: User.roles[:interviewer] } }
+
+      expect(response.body).to include(interviewer.email)
+      expect(response.body).not_to include(candidate.email)
+    end
+
+    it "filters by claimed status" do
+      admin = create(:user, :admin)
+      pending = create(:user, :pending_invitation, email: "pending@example.com", invited_by: admin)
+      claimed = create(:user, :candidate, email: "claimed@example.com", invited_by: admin)
+
+      sign_in admin
+      get invites_path, params: { q: { claimed_at_null: "true" } }
+
+      expect(response.body).to include(pending.email)
+      expect(response.body).not_to include(claimed.email)
+    end
+
+    it "paginates results" do
+      admin = create(:user, :admin)
+      17.times { |i| create(:user, :pending_invitation, email: "paginated#{i}@example.com", invited_by: admin) }
+
+      sign_in admin
+      get invites_path
+
+      expect(response.body).to include("series-nav")
+    end
   end
 
   describe "GET /invites/new" do
