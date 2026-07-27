@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   root "dashboard#show"
 
   resources :invites, only: %i[index new create show]
+  resources :interview_templates
   resource :claim, only: %i[new create]
   resource :candidate_profile, only: %i[show new create edit update]
   resource :interviewer_profile, only: %i[show new create edit update]
