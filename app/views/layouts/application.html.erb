@@ -20,6 +20,7 @@
         <%= link_to "NextRound", root_path, class: "text-lg font-semibold text-slate-900" %>
         <% if user_signed_in? %>
           <div class="flex items-center gap-4 text-sm text-slate-600">
+            <%= link_to "Interviews", interviews_path, class: "text-indigo-600 hover:underline" %>
             <% if policy(User).index? %>
               <%= link_to "Invites", invites_path, class: "text-indigo-600 hover:underline" %>
             <% end %>

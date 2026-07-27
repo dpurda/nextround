@@ -1,0 +1,33 @@
+<%= form_with model: @interview, builder: TailwindFormBuilder, html: { class: "space-y-4" } do |f| %>
+  <%= f.labeled_field :title %>
+
+  <% if current_user.admin? %>
+    <div>
+      <%= f.label :interviewer_id, "Interviewer", class: "block text-sm font-medium text-slate-700" %>
+      <%= f.select :interviewer_id, @interviewers.map { |u| [user_display_name(u), u.id] } %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :candidate_id, "Candidate", class: "block text-sm font-medium text-slate-700" %>
+    <%= f.select :candidate_id, @candidates.map { |u| [user_display_name(u), u.id] } %>
+  </div>
+
+  <div>
+    <%= f.label :interview_type, class: "block text-sm font-medium text-slate-700" %>
+    <%= f.select :interview_type, Interview.interview_types.keys.map { |t| [t.humanize, t] } %>
+  </div>
+
+  <% if @interview.persisted? %>
+    <div>
+      <%= f.label :status, class: "block text-sm font-medium text-slate-700" %>
+      <%= f.select :status, Interview.statuses.keys.map { |s| [s.humanize, s] } %>
+    </div>
+  <% end %>
+
+  <%= f.labeled_field :scheduled_at, "Scheduled at", as: :datetime_local_field %>
+  <%= f.labeled_field :duration_minutes, "Duration (minutes)", as: :number_field %>
+
+  <%= f.submit @interview.persisted? ? "Save changes" : "Create interview",
+        class: "w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 cursor-pointer" %>
+<% end %>

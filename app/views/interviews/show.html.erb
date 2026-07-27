@@ -1,0 +1,34 @@
+<div class="mx-auto max-w-2xl">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold text-slate-900"><%= @interview.title %></h1>
+      <p class="text-sm text-slate-500">
+        <%= @interview.interview_type.humanize %> ·
+        <%= @interview.scheduled_at&.strftime("%b %-d, %Y %H:%M") || "Not scheduled" %>
+      </p>
+    </div>
+    <span class="rounded-full px-2 py-0.5 text-xs font-medium <%= status_badge_class(@interview.status) %>">
+      <%= @interview.status.humanize %>
+    </span>
+  </div>
+
+  <dl class="mt-6 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Interviewer</dt>
+      <dd class="mt-1 text-sm text-slate-900"><%= user_display_name(@interview.interviewer) %></dd>
+    </div>
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Candidate</dt>
+      <dd class="mt-1 text-sm text-slate-900"><%= user_display_name(@interview.candidate) %></dd>
+    </div>
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Duration</dt>
+      <dd class="mt-1 text-sm text-slate-900"><%= @interview.duration_minutes.presence || "—" %> minutes</dd>
+    </div>
+  </dl>
+
+  <% if policy(@interview).update? %>
+    <%= link_to "Edit", edit_interview_path(@interview),
+          class: "mt-6 inline-block rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500" %>
+  <% end %>
+</div>
