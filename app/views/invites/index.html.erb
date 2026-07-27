@@ -4,8 +4,23 @@
     <%= icon_add_button new_invite_path, label: "New invite" %>
   </div>
 
+  <%= render layout: "shared/search_form", locals: { q: @q, url: invites_path } do |f| %>
+    <div>
+      <%= f.label :email_or_name_cont, "Search", class: "win-field-label" %>
+      <%= f.search_field :email_or_name_cont, class: "win-input", placeholder: "Name or email" %>
+    </div>
+    <div>
+      <%= f.label :role_eq, "Role", class: "win-field-label" %>
+      <%= f.select :role_eq, User.roles.map { |label, value| [label.humanize, value] }, { include_blank: "Any" }, class: "win-input" %>
+    </div>
+    <div>
+      <%= f.label :claimed_at_null, "Status", class: "win-field-label" %>
+      <%= f.select :claimed_at_null, [["Pending", "true"], ["Claimed", "false"]], { include_blank: "Any" }, class: "win-input" %>
+    </div>
+  <% end %>
+
   <% if @invited_users.empty? %>
-    <p class="mt-6 text-sm text-secondary">No invites yet.</p>
+    <p class="mt-6 text-sm text-secondary">No invites found.</p>
   <% else %>
     <div class="mt-6 overflow-x-auto">
       <table class="win-table">
@@ -41,5 +56,7 @@
         </tbody>
       </table>
     </div>
+
+    <%= render "shared/pagination", pagy: @pagy %>
   <% end %>
 </div>

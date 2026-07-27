@@ -6,8 +6,37 @@
     <% end %>
   </div>
 
+  <%= render layout: "shared/search_form", locals: { q: @q, url: interviews_path } do |f| %>
+    <div>
+      <%= f.label :title_or_interviewer_name_or_interviewer_email_or_candidate_name_or_candidate_email_cont,
+            "Search", class: "win-field-label" %>
+      <%= f.search_field :title_or_interviewer_name_or_interviewer_email_or_candidate_name_or_candidate_email_cont,
+            class: "win-input", placeholder: "Title, interviewer, or candidate" %>
+    </div>
+    <div>
+      <%= f.label :status_eq, "Status", class: "win-field-label" %>
+      <%= f.select :status_eq, Interview.statuses.map { |label, value| [label.humanize, value] }, { include_blank: "Any" }, class: "win-input" %>
+    </div>
+    <div>
+      <%= f.label :interview_type_eq, "Type", class: "win-field-label" %>
+      <%= f.select :interview_type_eq, Interview.interview_types.map { |label, value| [label.humanize, value] }, { include_blank: "Any" }, class: "win-input" %>
+    </div>
+    <div>
+      <%= f.label :feedback_recommendation_eq, "Recommendation", class: "win-field-label" %>
+      <%= f.select :feedback_recommendation_eq, Feedback.recommendations.map { |label, value| [label.humanize, value] }, { include_blank: "Any" }, class: "win-input" %>
+    </div>
+    <div>
+      <%= f.label :scheduled_at_gteq, "From", class: "win-field-label" %>
+      <%= f.date_field :scheduled_at_gteq, class: "win-input" %>
+    </div>
+    <div>
+      <%= f.label :scheduled_at_lteq, "To", class: "win-field-label" %>
+      <%= f.date_field :scheduled_at_lteq, class: "win-input" %>
+    </div>
+  <% end %>
+
   <% if @interviews.empty? %>
-    <p class="mt-6 text-sm text-secondary">No interviews yet.</p>
+    <p class="mt-6 text-sm text-secondary">No interviews found.</p>
   <% else %>
     <div class="mt-6 overflow-x-auto">
       <table class="win-table">
@@ -37,5 +66,7 @@
         </tbody>
       </table>
     </div>
+
+    <%= render "shared/pagination", pagy: @pagy %>
   <% end %>
 </div>

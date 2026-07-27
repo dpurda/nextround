@@ -1,0 +1,11 @@
+<%# Shared search form chrome (the Ransack form wrapper + Search/Clear buttons).
+    Each page supplies its own filter fields via the block, using the
+    yielded Ransack form builder. See DESIGN.md for a usage example. %>
+<%= search_form_for q, url: url, html: { class: "win-panel mt-4 flex flex-wrap items-end gap-3 p-3" } do |f| %>
+  <%= yield f %>
+
+  <div class="flex gap-2">
+    <%= f.submit "Search", class: "win-btn win-btn-primary" %>
+    <%= link_to "Clear", url, class: "win-btn" %>
+  </div>
+<% end %>
