@@ -1,0 +1,12 @@
+<% if object.errors.any? %>
+  <div class="mb-4 rounded-md border border-red-300 bg-red-50 p-4 text-sm text-red-700" data-turbo-temporary>
+    <p class="font-medium">
+      <%= pluralize(object.errors.count, "error") %> prevented this from being saved:
+    </p>
+    <ul class="mt-1 list-disc list-inside">
+      <% object.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

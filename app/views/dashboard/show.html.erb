@@ -1,0 +1,14 @@
+<div class="mx-auto max-w-4xl">
+  <h1 class="text-2xl font-semibold text-slate-900">
+    Welcome, <%= current_user.name.presence || current_user.email %>
+  </h1>
+  <p class="mt-1 text-sm text-slate-500">
+    Signed in as <span class="font-medium"><%= current_user.role.humanize %></span>.
+  </p>
+
+  <% unless current_user.profile_complete? %>
+    <div class="mt-6 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-800">
+      Your profile isn't complete yet.
+    </div>
+  <% end %>
+</div>
