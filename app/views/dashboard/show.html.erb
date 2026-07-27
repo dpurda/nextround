@@ -12,4 +12,49 @@
       <%= link_to "Complete it now", new_profile_path_for(current_user), class: "font-semibold" %>
     </div>
   <% end %>
+
+  <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="win-panel p-4">
+      <p class="win-detail-label">Total interviews</p>
+      <p class="mt-1 text-3xl font-semibold"><%= @total_count %></p>
+    </div>
+    <div class="win-panel p-4">
+      <p class="win-detail-label">Completed</p>
+      <p class="mt-1 text-3xl font-semibold"><%= @completed_count %></p>
+    </div>
+    <div class="win-panel p-4">
+      <p class="win-detail-label">Completion rate</p>
+      <p class="mt-1 text-3xl font-semibold"><%= @completion_rate %>%</p>
+    </div>
+  </div>
+
+  <% if @total_count.zero? %>
+    <p class="mt-6 text-sm text-secondary">No interviews yet — reporting will appear here once you have some.</p>
+  <% else %>
+    <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="win-panel p-4">
+        <h2 class="win-panel-header px-0 pb-2">Status breakdown</h2>
+        <%= pie_chart @status_counts, colors: ["#605E5C", "#8A6116", "#107C10", "#A80000"] %>
+      </div>
+
+      <div class="win-panel p-4">
+        <h2 class="win-panel-header px-0 pb-2">Interviews per week</h2>
+        <%= line_chart @weekly_interview_counts, colors: ["#0078D4"] %>
+      </div>
+    </div>
+
+    <% if @recommendation_counts.values.sum.positive? %>
+      <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="win-panel p-4">
+          <h2 class="win-panel-header px-0 pb-2">Recommendation breakdown</h2>
+          <%= pie_chart @recommendation_counts, colors: ["#107C10", "#0078D4", "#8A6116", "#A80000"] %>
+        </div>
+
+        <div class="win-panel p-4">
+          <h2 class="win-panel-header px-0 pb-2">Average rating per week</h2>
+          <%= line_chart @weekly_average_rating, colors: ["#107C10"], min: 0, max: 5 %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>

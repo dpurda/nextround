@@ -79,5 +79,69 @@ RSpec.describe "Dashboard", type: :request do
         expect(response.body).to include(">Interviews<")
       end
     end
+
+    describe "reporting" do
+      it "shows a no-data message and no charts when there are no interviews" do
+        sign_in create(:user, :admin)
+
+        get root_path
+
+        expect(response.body).to include("No interviews yet")
+        expect(response.body).not_to include("Status breakdown")
+      end
+
+      it "shows totals, completion rate, and charts once interviews exist" do
+        create(:interview, status: :scheduled)
+        completed = create(:interview, status: :scheduled)
+        create(:feedback, interview: completed)
+        completed.update!(status: :completed)
+
+        sign_in create(:user, :admin)
+        get root_path
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Status breakdown")
+        expect(response.body).to include("Interviews per week")
+        expect(response.body).to include("Recommendation breakdown")
+        expect(response.body).to include("Average rating per week")
+      end
+
+      it "shows the recommendation/rating charts only once feedback exists" do
+        create(:interview, status: :scheduled)
+
+        sign_in create(:user, :admin)
+        get root_path
+
+        expect(response.body).to include("Status breakdown")
+        expect(response.body).not_to include("Recommendation breakdown")
+      end
+
+      it "scopes totals to the interviewer's own interviews" do
+        mine = create(:interview)
+        create(:interview) # someone else's
+
+        sign_in mine.interviewer
+        get root_path
+
+        expect(response.body).to include("Total interviews")
+        # rendered as the digit "1", not asserting exact DOM position — just that
+        # only the interviewer's own interview counted, not both.
+        doc = Nokogiri::HTML(response.body)
+        total = doc.at_css(".win-panel p.text-3xl")&.text
+        expect(total).to eq("1")
+      end
+
+      it "scopes totals to the candidate's own interviews" do
+        mine = create(:interview)
+        create(:interview) # someone else's
+
+        sign_in mine.candidate
+        get root_path
+
+        doc = Nokogiri::HTML(response.body)
+        total = doc.at_css(".win-panel p.text-3xl")&.text
+        expect(total).to eq("1")
+      end
+    end
   end
 end
