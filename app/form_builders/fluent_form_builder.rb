@@ -1,6 +1,6 @@
-class TailwindFormBuilder < ActionView::Helpers::FormBuilder
-  INPUT_CLASS = "mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-  LABEL_CLASS = "block text-sm font-medium text-slate-700"
+class FluentFormBuilder < ActionView::Helpers::FormBuilder
+  INPUT_CLASS = "win-input w-full"
+  LABEL_CLASS = "block font-semibold mb-1 text-sm"
 
   %i[text_field email_field password_field number_field text_area datetime_local_field date_field].each do |method_name|
     define_method(method_name) do |attribute, options = {}|
@@ -12,6 +12,11 @@ class TailwindFormBuilder < ActionView::Helpers::FormBuilder
   def select(method, choices = nil, options = {}, html_options = {}, &block)
     html_options[:class] ||= INPUT_CLASS
     super(method, choices, options, html_options, &block)
+  end
+
+  def label(attribute, text = nil, options = {}, &block)
+    options[:class] ||= LABEL_CLASS
+    super(attribute, text, options, &block)
   end
 
   # Renders a label + input as a single unit, e.g. f.labeled_field :phone

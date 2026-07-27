@@ -1,1 +1,337 @@
 @import "tailwindcss";
+
+/*
+  NextRound — Modern Microsoft (Fluent-inspired) design system.
+  See DESIGN.md for the rationale and full component spec.
+  Sharp square corners everywhere; no rounded-*, no 3D bevels, no
+  gray/beveled skeuomorphism. Flat surfaces, a restrained blue accent,
+  Segoe UI.
+
+  Custom component classes below live in `@layer components` (Tailwind's
+  own layer ordering is theme -> base -> components -> utilities) so that
+  Tailwind utilities like `hidden`/`md:hidden` applied alongside them can
+  still override them, e.g. `class="win-icon-btn md:hidden"`. Unlayered
+  CSS always wins over anything in a layer regardless of specificity or
+  source order, which silently breaks that override if these aren't layered.
+*/
+
+:root {
+  --win-page-bg: #FAF9F8;
+  --win-surface: #FFFFFF;
+  --win-border: #E1DFDD;
+  --win-border-strong: #D2D0CE;
+  --win-accent: #0078D4;
+  --win-accent-hover: #106EBE;
+  --win-accent-pressed: #005A9E;
+  --win-text: #201F1E;
+  --win-text-secondary: #605E5C;
+  --win-text-disabled: #A19F9D;
+  --win-success: #107C10;
+  --win-success-bg: #DFF6DD;
+  --win-error: #A80000;
+  --win-error-bg: #FDE7E9;
+  --win-warning: #8A6116;
+  --win-warning-bg: #FFF4CE;
+}
+
+@layer base {
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    color: var(--win-text);
+    background: var(--win-page-bg);
+  }
+
+  a {
+    color: var(--win-accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--win-accent-hover);
+    text-decoration: underline;
+  }
+}
+
+/* Sharp corners everywhere, no exceptions. Deliberately unlayered + !important
+   so nothing (including future utilities) can accidentally round a corner. */
+* {
+  border-radius: 0 !important;
+}
+
+@layer components {
+  /* --- App chrome --- */
+
+  .win-titlebar {
+    background: var(--win-surface);
+    color: var(--win-text);
+    border-bottom: 1px solid var(--win-border);
+  }
+
+  .win-titlebar a,
+  .win-titlebar a:visited {
+    color: var(--win-text) !important;
+    text-decoration: none !important;
+    font-weight: 600;
+  }
+
+  .win-window {
+    background: var(--win-page-bg);
+  }
+
+  /* --- Panels / group boxes --- */
+
+  .win-panel {
+    background: var(--win-surface);
+    border: 1px solid var(--win-border);
+  }
+
+  .win-panel-header {
+    font-weight: 600;
+    border-bottom: 1px solid var(--win-border);
+    background: var(--win-surface);
+  }
+
+  /* --- Buttons --- */
+
+  .win-btn,
+  a.win-btn,
+  a.win-btn:visited {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--win-surface);
+    color: var(--win-text) !important;
+    text-decoration: none !important;
+    border: 1px solid var(--win-border);
+    padding: 6px 14px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 100ms, border-color 100ms;
+  }
+
+  .win-btn:hover,
+  a.win-btn:hover {
+    background: var(--win-page-bg);
+    border-color: var(--win-border-strong);
+  }
+
+  .win-btn:focus-visible {
+    outline: 2px solid var(--win-accent);
+    outline-offset: 1px;
+  }
+
+  .win-btn:disabled {
+    color: var(--win-text-disabled) !important;
+    cursor: default;
+    background: var(--win-page-bg);
+  }
+
+  .win-btn-primary,
+  a.win-btn-primary,
+  a.win-btn-primary:visited {
+    background: var(--win-accent);
+    border-color: var(--win-accent);
+    color: #FFFFFF !important;
+  }
+
+  .win-btn-primary:hover,
+  a.win-btn-primary:hover {
+    background: var(--win-accent-hover);
+    border-color: var(--win-accent-hover);
+  }
+
+  .win-btn-primary:active,
+  a.win-btn-primary:active {
+    background: var(--win-accent-pressed);
+    border-color: var(--win-accent-pressed);
+  }
+
+  .win-btn-danger,
+  a.win-btn-danger,
+  a.win-btn-danger:visited {
+    background: var(--win-surface);
+    border-color: var(--win-error);
+    color: var(--win-error) !important;
+  }
+
+  .win-btn-danger:hover,
+  a.win-btn-danger:hover {
+    background: var(--win-error-bg);
+    border-color: var(--win-error);
+  }
+
+  .win-btn-danger:active,
+  a.win-btn-danger:active {
+    background: var(--win-error);
+    color: #FFFFFF !important;
+  }
+
+  .win-icon-btn,
+  a.win-icon-btn,
+  a.win-icon-btn:visited {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    color: var(--win-text-secondary) !important;
+    text-decoration: none !important;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 100ms, color 100ms;
+  }
+
+  .win-icon-btn:hover,
+  a.win-icon-btn:hover {
+    background: var(--win-page-bg);
+    color: var(--win-accent) !important;
+  }
+
+  .win-icon-btn:focus-visible {
+    outline: 2px solid var(--win-accent);
+    outline-offset: 1px;
+  }
+
+  .win-icon-btn-primary,
+  a.win-icon-btn-primary,
+  a.win-icon-btn-primary:visited {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: var(--win-accent);
+    color: #FFFFFF !important;
+    text-decoration: none !important;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 100ms;
+  }
+
+  .win-icon-btn-primary:hover,
+  a.win-icon-btn-primary:hover {
+    background: var(--win-accent-hover);
+  }
+
+  .win-icon-btn-primary:active,
+  a.win-icon-btn-primary:active {
+    background: var(--win-accent-pressed);
+  }
+
+  .win-icon-btn-primary:focus-visible {
+    outline: 2px solid var(--win-accent);
+    outline-offset: 1px;
+  }
+
+  /* --- Form inputs --- */
+
+  .win-input {
+    background: var(--win-surface);
+    color: var(--win-text);
+    border: 1px solid var(--win-border);
+    padding: 6px 8px;
+    font-family: inherit;
+    font-size: 0.875rem;
+  }
+
+  .win-input:focus {
+    outline: none;
+    border: 2px solid var(--win-accent);
+    padding: 5px 7px; /* compensate for the thicker border so layout doesn't shift */
+  }
+
+  .win-input:disabled {
+    background: var(--win-page-bg);
+    color: var(--win-text-disabled);
+  }
+
+  /* --- Tables / lists --- */
+
+  .win-table {
+    border-collapse: collapse;
+    width: 100%;
+    background: var(--win-surface);
+  }
+
+  .win-table th {
+    background: var(--win-page-bg);
+    text-align: left;
+    font-weight: 600;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--win-border);
+  }
+
+  .win-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--win-border);
+  }
+
+  .win-table tbody tr:hover {
+    background: #F3F9FD;
+  }
+
+  /* --- Status badges --- */
+
+  .win-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+
+  .win-badge-neutral { background: var(--win-border); color: var(--win-text); }
+  .win-badge-success { background: var(--win-success-bg); color: var(--win-success); }
+  .win-badge-error { background: var(--win-error-bg); color: var(--win-error); }
+  .win-badge-warning { background: var(--win-warning-bg); color: var(--win-warning); }
+
+  /* --- Flash / alert messages --- */
+
+  .win-alert {
+    padding: 10px 12px;
+    border-left: 4px solid transparent;
+    font-size: 0.875rem;
+  }
+
+  .win-alert-success {
+    background: var(--win-success-bg);
+    border-left-color: var(--win-success);
+    color: var(--win-success);
+  }
+
+  .win-alert-error {
+    background: var(--win-error-bg);
+    border-left-color: var(--win-error);
+    color: var(--win-error);
+  }
+
+  .win-alert-warning {
+    background: var(--win-warning-bg);
+    border-left-color: var(--win-warning);
+    color: var(--win-warning);
+  }
+
+  /* --- Misc text utilities --- */
+
+  .text-secondary {
+    color: var(--win-text-secondary);
+  }
+
+  /* --- Read-only key/value detail lists (profile/interview/feedback show pages) --- */
+
+  .win-detail-row {
+    padding: 10px 14px;
+  }
+
+  .win-detail-row + .win-detail-row {
+    border-top: 1px solid var(--win-border);
+  }
+
+  .win-detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--win-text-secondary);
+  }
+}
