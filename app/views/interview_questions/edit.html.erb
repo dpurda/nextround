@@ -1,0 +1,6 @@
+<%= turbo_frame_tag dom_id(@interview_question) do %>
+  <div class="win-panel p-3">
+    <%= render "shared/form_errors", object: @interview_question %>
+    <%= render "form", question: @interview_question %>
+  </div>
+<% end %>

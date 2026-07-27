@@ -27,17 +27,7 @@
     </div>
 
     <% interview.interview_questions.each do |question| %>
-      <div class="win-detail-row">
-        <div class="flex items-start justify-between gap-2">
-          <p class="text-sm"><%= question.prompt %></p>
-          <span class="win-badge <%= question.covered? ? "win-badge-success" : "win-badge-neutral" %>">
-            <%= question.covered? ? "Covered" : "Not covered" %>
-          </span>
-        </div>
-        <% if question.notes.present? %>
-          <p class="mt-1 text-sm text-secondary"><%= question.notes %></p>
-        <% end %>
-      </div>
+      <%= render "interview_questions/question_row", question: question %>
     <% end %>
   <% end %>
 </div>

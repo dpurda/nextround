@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       patch :update_status
     end
     resource :feedback, only: %i[new create edit update]
+    resources :interview_questions, only: %i[edit update]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

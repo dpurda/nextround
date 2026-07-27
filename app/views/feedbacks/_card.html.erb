@@ -7,7 +7,7 @@
         <%= icon_edit_button edit_interview_feedback_path(interview), label: "Edit feedback" %>
       <% end %>
     <% elsif policy(new_feedback).create? %>
-      <%= icon_edit_button new_interview_feedback_path(interview), label: "Add feedback" %>
+      <%= icon_add_button new_interview_feedback_path(interview), label: "Add feedback" %>
     <% end %>
   </div>
 

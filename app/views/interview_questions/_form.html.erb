@@ -1,0 +1,16 @@
+<%= form_with model: question, url: interview_interview_question_path(question.interview, question), method: :patch,
+      builder: FluentFormBuilder, html: { class: "space-y-3" } do |f| %>
+  <p class="text-sm font-semibold"><%= question.prompt %></p>
+
+  <div class="flex items-center gap-2">
+    <%= f.check_box :covered %>
+    <%= f.label :covered, "Covered", class: "font-semibold text-sm" %>
+  </div>
+
+  <%= f.labeled_field :notes, "Notes", as: :text_area, rows: 2 %>
+
+  <div class="flex gap-2">
+    <%= f.submit "Save", class: "win-btn win-btn-primary" %>
+    <%= link_to "Cancel", interview_path(question.interview), class: "win-btn" %>
+  </div>
+<% end %>
