@@ -1,8 +1,7 @@
 # NextRound
 
-A Ruby on Rails application for preparing for, conducting, and reviewing mock
-technical interviews. Built as a practical assignment for a Full Stack
-Engineer role.
+A Ruby on Rails application for preparing for conducting, and reviewing mock
+technical interviews.
 
 ## Solution overview
 
@@ -139,25 +138,23 @@ already generates, with the SQLite file living on a Fly volume).
 
 ## Design decisions
 
-Full detail — including the two design-system iterations we actually went
+Full detail, including the two design-system iterations I actually went
 through and *why* — is in [`DESIGN.md`](DESIGN.md). The short version:
 
 - **Rails monolith + Hotwire over a separate API + SPA.** Faster to build
-  well within the timeframe while still feeling interactive; an API/SPA
-  split is the natural next step if a mobile client were ever needed.
+  well within the timeframe while still feeling interactive;
 - **Single `User` model with a role enum, not three separate tables.**
   Since "review your own feedback" is a first-class requirement, a
   candidate needs to be a real logged-in identity, not just a data row —
   collapsing candidate/interviewer/admin into one table with a role avoids
   an identity-sync problem between "the person" and "their login."
 - **Invite-by-code instead of invite-by-email.** No outbound email
-  dependency anywhere in the app — removes an entire class of demo-day
-  failure (SMTP/deliverability) while still demonstrating secure-token
-  thinking: the 16-digit code is single-use, expires after 7 days, and
+  dependency anywhere in the app (something for the future) the 16-digit
+  code is single-use, expires after 7 days, and
   `/claim` is rate-limited (rack-attack) since it's an unauthenticated
   endpoint accepting a code.
 - **SQLite instead of Postgres.** This is a practice tool, not a
-  multi-writer production system — SQLite removes a whole external service
+  multi-writer production system, SQLite removes a whole external service
   (nothing to provision or connect to, locally or in production) at zero
   functional cost at this scale. Rails' database adapter makes moving to
   Postgres later a config change, not a rewrite, so the scaling path is
@@ -168,7 +165,7 @@ through and *why* — is in [`DESIGN.md`](DESIGN.md). The short version:
   everywhere (interview list, dashboard reporting, invites list) rather
   than re-implemented per controller — interviewer sees only their own
   data, admin sees everything, satisfying the security requirement without
-  inventing an organizations/teams concept that wasn't asked for.
+  inventing an organizations/teams concept.
 - **A hand-rolled nested-attributes pattern for the CV sections**
   (work experience / education) instead of a gem like Cocoon — one small
   reusable Stimulus controller, documented in `DESIGN.md` for reuse on any
@@ -192,19 +189,13 @@ through and *why* — is in [`DESIGN.md`](DESIGN.md). The short version:
 
 ## Known limitations
 
-- No email delivery anywhere — invite codes must be shared out of band by
-  the inviter, and there's no password-reset-by-email flow (would need a
-  support/re-invite path in a real deployment).
+- No email delivery anywhere.
 - SQLite is single-writer — fine at this scale, would need to move to
   Postgres before running with genuinely concurrent writers.
 - Single flat role set, no per-organization data isolation.
 - Profile completion (candidate or interviewer) is prompted after claiming
   an invite but not strictly enforced before an interview can be scheduled
   against that person.
-- No automated browser/system tests exercising the Stimulus-driven
-  interactions (nested CV forms, inline status dropdown, Turbo Frame
-  edits) — covered at the request-spec level (the actual params/HTML the
-  JS would produce), not with a headless browser.
 
 ## Future improvements
 
