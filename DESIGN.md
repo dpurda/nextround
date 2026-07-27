@@ -153,6 +153,37 @@ Two variants, both square, both with the same 2px blue focus outline:
 White background, 1px `--border` border, square corners. On focus: border
 becomes 2px accent blue (no glow/shadow ring needed).
 
+### Repeatable CV-style sections (nested attributes)
+For a `has_many` association edited inline on a parent form (e.g. a
+candidate's work experience / education entries), use the `nested-form`
+Stimulus controller (`app/javascript/controllers/nested_form_controller.js`)
+rather than a gem (no Cocoon dependency) — it's the standard "Rails nested
+form without a gem" recipe:
+
+- Each repeatable section gets its own `data-controller="nested-form"`
+  wrapper with a `data-nested-form-target="container"` (existing rows,
+  rendered server-side via `f.fields_for`) and a `<template
+  data-nested-form-target="template">` holding one blueprint row built from
+  a brand-new unsaved record with `child_index: "NEW_RECORD"`.
+- Each row is its own `.win-panel` card with a "Remove" button
+  (`.win-btn-danger`, `data-action="nested-form#remove"`) — existing rows
+  get soft-removed (hidden + `_destroy` hidden field set to `"1"`, so the
+  server actually deletes them on save), brand-new not-yet-saved rows
+  (`data-new-record="true"`) just get removed from the DOM outright.
+- The row's own field markup lives in one shared partial (e.g.
+  `_work_experience_fields`) so the container's real rows and the
+  template's blueprint row render identically — never write the fields
+  twice.
+- `reject_if: :all_blank` on `accepts_nested_attributes_for` means the form
+  can always show one extra blank row for "the next entry" without extra
+  JS bookkeeping — if it's left empty on submit, it's silently discarded
+  rather than raising a validation error.
+
+### Tables / lists
+White background, header row with light gray background + semibold text,
+1px border between rows (not full cell borders), row hover = very light
+blue tint (`#F3F9FD`).
+
 ### Tables / lists
 White background, header row with light gray background + semibold text,
 1px border between rows (not full cell borders), row hover = very light

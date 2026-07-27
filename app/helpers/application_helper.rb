@@ -55,4 +55,10 @@ module ApplicationHelper
   def icon_add_button(path, label:)
     link_to PLUS_ICON, path, class: "win-icon-btn-primary", aria: { label: label }, title: label
   end
+
+  def date_range_for(start_date, end_date)
+    return "" unless start_date
+
+    "#{start_date.strftime('%b %Y')} – #{end_date ? end_date.strftime('%b %Y') : 'Present'}"
+  end
 end
