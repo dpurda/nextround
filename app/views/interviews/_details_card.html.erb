@@ -20,4 +20,24 @@
       <dd class="mt-1 text-sm"><%= interview.duration_minutes.presence || "—" %> minutes</dd>
     </div>
   </dl>
+
+  <% if interview.interview_questions.any? %>
+    <div class="win-panel-header px-4 py-3">
+      <h2 class="win-detail-label">Questions</h2>
+    </div>
+
+    <% interview.interview_questions.each do |question| %>
+      <div class="win-detail-row">
+        <div class="flex items-start justify-between gap-2">
+          <p class="text-sm"><%= question.prompt %></p>
+          <span class="win-badge <%= question.covered? ? "win-badge-success" : "win-badge-neutral" %>">
+            <%= question.covered? ? "Covered" : "Not covered" %>
+          </span>
+        </div>
+        <% if question.notes.present? %>
+          <p class="mt-1 text-sm text-secondary"><%= question.notes %></p>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
 </div>

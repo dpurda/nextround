@@ -7,9 +7,14 @@
         <%= @interview_template.created_by ? user_display_name(@interview_template.created_by) : "Unknown" %>
       </p>
     </div>
-    <% if policy(@interview_template).update? %>
-      <%= icon_edit_button edit_interview_template_path(@interview_template), label: "Edit template" %>
-    <% end %>
+    <div class="flex items-center gap-2">
+      <% if policy(Interview).new? %>
+        <%= icon_add_button new_interview_path(interview_template_id: @interview_template.id), label: "Start interview from this template" %>
+      <% end %>
+      <% if policy(@interview_template).update? %>
+        <%= icon_edit_button edit_interview_template_path(@interview_template), label: "Edit template" %>
+      <% end %>
+    </div>
   </div>
   <% if @interview_template.description.present? %>
     <p class="mt-4 text-sm"><%= @interview_template.description %></p>

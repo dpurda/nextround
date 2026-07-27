@@ -1,6 +1,13 @@
 <%= form_with model: @interview, builder: FluentFormBuilder, html: { class: "space-y-4" } do |f| %>
   <%= f.labeled_field :title %>
 
+  <% if @interview.new_record? %>
+    <div>
+      <%= f.label :interview_template_id, "Start from template (optional)" %>
+      <%= f.select :interview_template_id, @interview_templates.map { |t| [t.name, t.id] }, include_blank: "No template" %>
+    </div>
+  <% end %>
+
   <% if current_user.admin? %>
     <div>
       <%= f.label :interviewer_id, "Interviewer" %>
@@ -27,6 +34,26 @@
 
   <%= f.labeled_field :scheduled_at, "Scheduled at", as: :datetime_local_field %>
   <%= f.labeled_field :duration_minutes, "Duration (minutes)", as: :number_field %>
+
+  <% if @interview.persisted? %>
+    <div data-controller="nested-form">
+      <h2 class="win-detail-label mb-3">Questions</h2>
+
+      <div data-nested-form-target="container">
+        <%= f.fields_for :interview_questions do |qf| %>
+          <%= render "interview_question_fields", f: qf %>
+        <% end %>
+      </div>
+
+      <template data-nested-form-target="template">
+        <%= f.fields_for :interview_questions, InterviewQuestion.new, child_index: "NEW_RECORD" do |qf| %>
+          <%= render "interview_question_fields", f: qf %>
+        <% end %>
+      </template>
+
+      <button type="button" class="win-btn" data-action="nested-form#add">+ Add question</button>
+    </div>
+  <% end %>
 
   <%= f.submit @interview.persisted? ? "Save changes" : "Create interview", class: "win-btn win-btn-primary w-full cursor-pointer" %>
 <% end %>

@@ -14,7 +14,7 @@ class InterviewsController < ApplicationController
   end
 
   def new
-    @interview = Interview.new
+    @interview = Interview.new(interview_template_id: params[:interview_template_id])
     authorize @interview
   end
 
@@ -71,11 +71,14 @@ class InterviewsController < ApplicationController
   def load_form_collections
     @candidates = User.candidate.order(:email)
     @interviewers = current_user.admin? ? User.interviewer.order(:email) : []
+    @interview_templates = policy_scope(InterviewTemplate).order(:name)
   end
 
   def interview_params
     permitted = params.require(:interview).permit(
-      :title, :interview_type, :status, :scheduled_at, :duration_minutes, :candidate_id, :interviewer_id
+      :title, :interview_type, :status, :scheduled_at, :duration_minutes, :candidate_id, :interviewer_id,
+      :interview_template_id,
+      interview_questions_attributes: %i[id prompt notes covered _destroy]
     )
     permitted[:interviewer_id] = current_user.id if current_user.interviewer?
     permitted
