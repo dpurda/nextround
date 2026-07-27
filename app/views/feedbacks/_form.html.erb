@@ -1,0 +1,20 @@
+<%= form_with model: @feedback, url: interview_feedback_path(@interview), builder: TailwindFormBuilder,
+      html: { class: "mt-4 space-y-4" } do |f| %>
+  <%= f.labeled_field :strengths, as: :text_area, rows: 3 %>
+  <%= f.labeled_field :improvements, as: :text_area, rows: 3 %>
+
+  <div>
+    <%= f.label :recommendation, class: "block text-sm font-medium text-slate-700" %>
+    <%= f.select :recommendation, Feedback.recommendations.keys.map { |r| [r.humanize, r] } %>
+  </div>
+
+  <div>
+    <%= f.label :overall_rating, "Overall rating (1-5)", class: "block text-sm font-medium text-slate-700" %>
+    <%= f.select :overall_rating, (1..5).to_a %>
+  </div>
+
+  <%= f.labeled_field :notes, as: :text_area, rows: 2 %>
+
+  <%= f.submit @feedback.persisted? ? "Save changes" : "Save feedback",
+        class: "w-full rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 cursor-pointer" %>
+<% end %>

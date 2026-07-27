@@ -1,0 +1,23 @@
+<div class="rounded-md border border-slate-200 bg-white">
+  <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+    <h2 class="text-xs font-medium uppercase tracking-wide text-slate-500">Details</h2>
+    <% if policy(interview).update? %>
+      <%= icon_edit_button edit_interview_path(interview), label: "Edit interview" %>
+    <% end %>
+  </div>
+
+  <dl class="divide-y divide-slate-200">
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Interviewer</dt>
+      <dd class="mt-1 text-sm text-slate-900"><%= user_display_name(interview.interviewer) %></dd>
+    </div>
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Candidate</dt>
+      <dd class="mt-1 text-sm text-slate-900"><%= user_display_name(interview.candidate) %></dd>
+    </div>
+    <div class="px-4 py-3">
+      <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Duration</dt>
+      <dd class="mt-1 text-sm text-slate-900"><%= interview.duration_minutes.presence || "—" %> minutes</dd>
+    </div>
+  </dl>
+</div>

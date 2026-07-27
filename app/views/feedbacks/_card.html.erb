@@ -1,0 +1,19 @@
+<% new_feedback = Feedback.new(interview_id: interview.id) %>
+<div class="rounded-md border border-slate-200 bg-white">
+  <div class="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+    <h2 class="text-xs font-medium uppercase tracking-wide text-slate-500">Feedback</h2>
+    <% if interview.feedback.present? %>
+      <% if policy(interview.feedback).update? %>
+        <%= icon_edit_button edit_interview_feedback_path(interview), label: "Edit feedback" %>
+      <% end %>
+    <% elsif policy(new_feedback).create? %>
+      <%= icon_edit_button new_interview_feedback_path(interview), label: "Add feedback" %>
+    <% end %>
+  </div>
+
+  <% if interview.feedback.present? %>
+    <%= render "feedbacks/details", feedback: interview.feedback %>
+  <% else %>
+    <p class="px-4 py-3 text-sm text-slate-500">No feedback yet.</p>
+  <% end %>
+</div>
