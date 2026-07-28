@@ -49,6 +49,8 @@ gem "rack-attack"
 # Reporting charts
 gem "chartkick"
 gem "groupdate"
+# Used by db/seeds.rb to generate realistic demo data in every environment, production included
+gem "faker"
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -63,7 +65,6 @@ group :development, :test do
   # Testing
   gem "rspec-rails"
   gem "factory_bot_rails"
-  gem "faker"
 end
 
 group :test do
@@ -78,3 +79,5 @@ group :development do
   # N+1 query detection
   gem "bullet"
 end
+
+gem "dockerfile-rails", ">= 1.7", :group => :development
