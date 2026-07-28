@@ -155,10 +155,12 @@ Interview (interviewer, candidate, status, interview_type, interview_template)
 
 ### Deployment approach
 
-Not yet deployed (deferred by request during development — this is a
-single Docker-deployable Rails app with no external service dependencies,
-so it's a `fly launch` / `fly deploy` away using the Dockerfile Rails 8
-already generates, with the SQLite file living on a Fly volume).
+Live at **[nextround.fly.dev](https://nextround.fly.dev)** — a single
+Fly.io Machine running the Rails 8 default Docker build, with the SQLite
+files on a Fly volume. CI (Brakeman, importmap audit, Rubocop) and CD
+(`flyctl deploy`) run as two independent GitHub Actions workflows on push
+to `main`. Full diagrams (data flow, CI/CD + runtime topology) and the
+scaling tradeoffs are in [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ## Design decisions
 
